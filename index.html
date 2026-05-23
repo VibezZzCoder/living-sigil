@@ -21,6 +21,13 @@
   --line: rgba(244, 199, 91, 0.38);
   --control-size: clamp(86px, 18vmin, 124px);
   --button-height: 42px;
+  --shell-block: 100vh;
+  --shell-block: 100svh;
+  --shell-block: 100dvh;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
 }
 
 * {
@@ -52,23 +59,23 @@ button {
 
 .game-shell {
   width: 100%;
-  height: 100dvh;
+  height: var(--shell-block);
   padding:
-    max(10px, env(safe-area-inset-top))
-    max(12px, env(safe-area-inset-right))
-    max(10px, env(safe-area-inset-bottom))
-    max(12px, env(safe-area-inset-left));
+    max(10px, var(--safe-top))
+    max(12px, var(--safe-right))
+    max(10px, var(--safe-bottom))
+    max(12px, var(--safe-left));
   display: grid;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto minmax(0, 1fr);
   align-content: start;
   justify-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .stage {
   position: relative;
   width: min(94vw, 960px);
-  max-height: 43dvh;
+  max-height: min(43dvh, 45svh);
   aspect-ratio: 16 / 9;
   border: 1px solid rgba(244, 199, 91, 0.36);
   background: #0e0c0a;
@@ -200,23 +207,55 @@ button {
   transform: translateY(1px);
 }
 
+.desktop-controls {
+  display: none;
+  max-width: min(94vw, 960px);
+  color: rgba(246, 236, 211, 0.74);
+  font-size: clamp(12px, 1.5vw, 14px);
+  font-weight: 700;
+  text-align: center;
+}
+
+.desktop-controls span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 8px;
+  white-space: nowrap;
+}
+
+kbd {
+  min-width: 26px;
+  padding: 2px 7px;
+  border: 1px solid rgba(244, 199, 91, 0.3);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.36);
+  color: var(--text);
+  font: 800 0.86em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  box-shadow: inset 0 -1px 0 rgba(244, 199, 91, 0.14);
+}
+
 .touch-controls {
   width: min(96vw, 900px);
-  min-height: 168px;
-  align-self: start;
+  height: 100%;
+  min-height: 0;
+  align-self: stretch;
   display: grid;
   grid-template-columns: minmax(var(--control-size), 1fr) auto minmax(var(--control-size), 1fr);
+  grid-template-rows: minmax(42px, auto) minmax(var(--control-size), 1fr) minmax(34px, auto);
+  grid-template-areas:
+    ". awaken ."
+    "move . shoot"
+    ". pause .";
   align-items: center;
   justify-items: center;
-  gap: 14px;
+  gap: clamp(12px, 2.2dvh, 20px) 14px;
+  padding: 0 0 max(8px, var(--safe-bottom));
   touch-action: none;
 }
 
 .center-controls {
-  display: grid;
-  grid-auto-flow: row;
-  justify-items: center;
-  gap: 8px;
+  display: contents;
 }
 
 .joystick {
@@ -248,9 +287,29 @@ button {
 }
 
 .awaken-button {
+  grid-area: awaken;
   border-color: rgba(255, 218, 98, 0.58);
   background: linear-gradient(180deg, #604915, #1b1308);
   box-shadow: 0 0 18px rgba(244, 199, 91, 0.1);
+}
+
+.pause-button {
+  grid-area: pause;
+  min-width: 84px;
+  min-height: 34px;
+  border-color: rgba(244, 199, 91, 0.32);
+  background: linear-gradient(180deg, rgba(50, 40, 24, 0.88), rgba(14, 11, 8, 0.88));
+  color: rgba(246, 236, 211, 0.86);
+  font-size: 0.88rem;
+  opacity: 0.86;
+}
+
+#move-joystick {
+  grid-area: move;
+}
+
+#shoot-joystick {
+  grid-area: shoot;
 }
 
 .debug-panel {
@@ -276,18 +335,19 @@ button {
 
 @media (orientation: landscape) and (max-height: 620px) {
   :root {
-    --control-size: clamp(74px, 18dvh, 104px);
+    --control-size: clamp(68px, 17dvh, 96px);
     --button-height: 34px;
   }
 
   .game-shell {
     display: block;
     position: relative;
+    padding-bottom: max(8px, var(--safe-bottom));
   }
 
   .stage {
-    width: min(88vw, calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 88px) * 16 / 9), 960px);
-    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 88px);
+    width: min(88vw, calc((var(--shell-block) - var(--safe-top) - var(--safe-bottom) - 152px) * 16 / 9), 960px);
+    max-height: calc(var(--shell-block) - var(--safe-top) - var(--safe-bottom) - 152px);
     margin: 0 auto;
   }
 
@@ -297,16 +357,25 @@ button {
     bottom: max(8px, env(safe-area-inset-bottom));
     z-index: 4;
     transform: translateX(-50%);
-    min-height: 112px;
+    height: 134px;
+    min-height: 134px;
     width: min(96vw, 900px);
+    grid-template-rows: minmax(34px, auto) minmax(var(--control-size), 1fr) minmax(28px, auto);
+    gap: 4px 14px;
+    padding: 0;
     pointer-events: auto;
+  }
+
+  .pause-button {
+    min-height: 28px;
+    font-size: 0.78rem;
   }
 
   .joystick {
     background:
       radial-gradient(circle at 50% 50%, rgba(244, 199, 91, 0.15), transparent 35%),
-      rgba(0, 0, 0, 0.24);
-    opacity: 0.72;
+      rgba(0, 0, 0, 0.2);
+    opacity: 0.66;
   }
 
   .hud {
@@ -318,11 +387,20 @@ button {
   .game-shell {
     grid-template-rows: auto auto;
     align-content: center;
+    gap: 12px;
   }
 
   .stage {
-    width: min(82vw, 960px);
-    max-height: 70dvh;
+    width: min(82vw, calc(76dvh * 16 / 9), 960px);
+    max-height: 76dvh;
+  }
+
+  .desktop-controls {
+    display: block;
+  }
+
+  .touch-controls {
+    display: none;
   }
 }
 
@@ -348,9 +426,17 @@ button {
 
           <div id="screen-message" class="screen-message">
             <h1>Living Sigil</h1>
-            <p>Move with WASD. Shoot with arrow keys.</p>
+            <p>Move with WASD. Shoot with arrow keys. Space awakens. P or Enter pauses.</p>
             <button id="start-button" type="button">Start</button>
           </div>
+        </section>
+
+        <section class="desktop-controls" aria-label="Keyboard controls">
+          <span><kbd>WASD</kbd> Move</span>
+          <span><kbd>Arrows</kbd> Shoot</span>
+          <span><kbd>Space</kbd> Awaken</span>
+          <span><kbd>P</kbd>/<kbd>Enter</kbd> Pause</span>
+          <span><kbd>R</kbd> Restart</span>
         </section>
 
         <section id="touch-controls" class="touch-controls" aria-label="Touch controls">
@@ -359,8 +445,8 @@ button {
           </div>
 
           <div class="center-controls">
-            <button id="pause-button" class="control-button" type="button">Pause</button>
             <button id="awakening-button" class="control-button awaken-button" type="button">Awaken</button>
+            <button id="pause-button" class="control-button pause-button" type="button">Pause</button>
           </div>
 
           <div id="shoot-joystick" class="joystick" data-joystick="shoot" aria-label="Shoot joystick">
@@ -434,6 +520,7 @@ const GAME_KEYS = new Set([
   "ArrowLeft",
   "ArrowRight",
   "Space",
+  "Enter",
   "Escape",
   "KeyP",
   "KeyR",
@@ -592,7 +679,7 @@ class InputManager {
     const shoot = this.touch.vectors.shoot.x || this.touch.vectors.shoot.y ? this.touch.vectors.shoot : keyboardShoot;
 
     const rawAwakening = this.keyboard.isDown("Space") || this.buttonPresses.has("awakening");
-    const rawPause = this.keyboard.isDown("Escape") || this.keyboard.isDown("KeyP") || this.buttonPresses.has("pause");
+    const rawPause = this.keyboard.isDown("Escape") || this.keyboard.isDown("KeyP") || this.keyboard.isDown("Enter") || this.buttonPresses.has("pause");
     const rawRestart = this.keyboard.isDown("KeyR");
     const rawSpawnEnemy = this.keyboard.isDown("KeyE");
     const rawDebugForm = this.keyboard.isDown("KeyG");
@@ -1881,7 +1968,7 @@ class Hud {
 
     if (world.gameState === "title") {
       title.textContent = "Living Sigil";
-      text.textContent = "Move with WASD or the left stick. Shoot with arrows or the right stick.";
+      text.textContent = "Move with WASD. Shoot with arrow keys. Space awakens. P or Enter pauses.";
       button.textContent = "Start";
     } else if (world.gameState === "paused") {
       title.textContent = "Paused";
@@ -1931,7 +2018,7 @@ class DebugOverlay {
       `effects: ${world.effects.length} shake: ${world.shakeTimer.toFixed(2)}`,
       `hitbox/anchor: player r${world.player.radius} centers ${world.debug.centers ? "on" : "off"}`,
       `wave: ${wave ? wave.id : "done"} ${world.waveTimer.toFixed(1)}s spawn ${world.spawnTimer.toFixed(1)} clear ${world.clearTimer.toFixed(1)}`,
-      "keys: ` debug, R restart, Space awaken, E spawn, G form"
+      "keys: ` debug, R restart, Space awaken, P/Enter pause, E spawn, G form"
     ];
 
     this.element.textContent = lines.join("\n");
