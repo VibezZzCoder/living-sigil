@@ -2,43 +2,7 @@
 
 Plain HTML/CSS/JavaScript MVP for a 2D browser/mobile twin-stick shooter.
 
-## Run Locally
-
-From this folder:
-
-```bash
-python3 -m http.server 8000
-```
-
-Then open:
-
-```text
-http://localhost:8000/
-```
-
-## Build Release Folder
-
-```bash
-node scripts/tools/build-release.js
-```
-
-The generated folder is:
-
-```text
-release/browser/
-```
-
-## Build Single-File Upload Artifact
-
-```bash
-node scripts/tools/build-single-file.js
-```
-
-The generated upload-ready HTML file is:
-
-```text
-release/single-file/living-sigil-tomb.html
-```
+Playable at https://vibezzzcoder.github.io/living-sigil/ 
 
 ## Current Controls
 
