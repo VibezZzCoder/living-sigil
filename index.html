@@ -147,6 +147,7 @@ button {
 
 .meter.is-ready {
   border-color: rgba(255, 241, 168, 0.92);
+  animation: ready-flash 1.05s ease-in-out infinite;
   box-shadow: 0 0 18px rgba(255, 218, 98, 0.34);
 }
 
@@ -293,6 +294,12 @@ kbd {
   box-shadow: 0 0 18px rgba(244, 199, 91, 0.1);
 }
 
+.awaken-button.is-ready {
+  animation: ready-flash 1.05s ease-in-out infinite;
+  border-color: rgba(255, 241, 168, 0.96);
+  background: linear-gradient(180deg, #886614, #2b1c08);
+}
+
 .pause-button {
   grid-area: pause;
   min-width: 84px;
@@ -310,6 +317,48 @@ kbd {
 
 #shoot-joystick {
   grid-area: shoot;
+}
+
+@keyframes ready-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 14px rgba(244, 199, 91, 0.24);
+    filter: brightness(1);
+  }
+
+  50% {
+    box-shadow: 0 0 28px rgba(255, 229, 114, 0.78);
+    filter: brightness(1.32);
+  }
+}
+
+@media (orientation: portrait) and (max-width: 899px) {
+  .awaken-button {
+    transform: translateY(14px);
+  }
+
+  .pause-button {
+    transform: translateY(-104px);
+  }
+
+  .control-button:active {
+    transform: translateY(1px);
+  }
+
+  .awaken-button:active {
+    transform: translateY(15px);
+  }
+
+  .pause-button:active {
+    transform: translateY(-103px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter.is-ready,
+  .awaken-button.is-ready {
+    animation: none;
+  }
 }
 
 .debug-panel {
@@ -1927,6 +1976,7 @@ class Hud {
     this.wave = documentRef.getElementById("hud-wave");
     this.fill = documentRef.getElementById("awakening-fill");
     this.awakeningLabel = documentRef.getElementById("awakening-label");
+    this.awakeningButton = documentRef.getElementById("awakening-button");
     this.screen = documentRef.getElementById("screen-message");
     this.startButton = documentRef.getElementById("start-button");
   }
@@ -1940,9 +1990,11 @@ class Hud {
     this.wave.textContent = world.gameState === "stage_clear" ? "Clear" : wave ? wave.label : "Final";
 
     const meter = Math.round(player.awakeningMeter);
+    const isReady = meter >= 100 && getPlayerForm(player) !== "awakened";
     this.fill.style.width = `${meter}%`;
-    this.fill.parentElement.classList.toggle("is-ready", meter >= 100 && getPlayerForm(player) !== "awakened");
+    this.fill.parentElement.classList.toggle("is-ready", isReady);
     this.fill.parentElement.classList.toggle("is-awakened", getPlayerForm(player) === "awakened");
+    this.awakeningButton.classList.toggle("is-ready", isReady);
 
     if (getPlayerForm(player) === "awakened") {
       this.awakeningLabel.textContent = `Awakened ${player.awakeningTimer.toFixed(1)}s`;
