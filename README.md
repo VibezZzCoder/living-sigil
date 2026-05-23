@@ -1,4 +1,4 @@
-# Living Sigil Tomb Prototype
+# Living Sigil
 
 Plain HTML/CSS/JavaScript MVP for a 2D browser/mobile twin-stick shooter.
 
@@ -9,10 +9,10 @@ Playable at https://vibezzzcoder.github.io/living-sigil/
 - WASD: move
 - Arrow keys: shoot
 - Space: activate Awakening when meter is full
-- Esc or P: pause
+- Esc, P, or Enter: pause
 - R: restart
 - Backtick or F1: debug overlay
-- Mobile: left joystick moves, right joystick shoots, Pause and Awaken buttons sit between the sticks
+- Mobile: left joystick moves, right joystick shoots, Awaken sits near the playfield, and Pause is separated as a secondary system button
 
 ## Current Scope
 
@@ -46,6 +46,6 @@ The central symbol and derivative visual designs are original copyrighted works 
 
 Commercial use of the artwork, symbols, sprites, character designs, visual identity, logos, icons, or derivative designs is prohibited without prior written permission. This includes commercial games, apps, merchandise, advertising, branding, NFTs/tokens, asset packs, stock art, icons, logos, mascots, resale, and commercial AI training datasets.
 
-Generated single-file releases may contain both MIT-licensed code and protected embedded assets. The code portions remain MIT-licensed, but embedded artwork and asset data remain under the Asset License. The complete bundled game may be played, shared, and forked for non-commercial purposes only unless separate written commercial permission is granted.
+Generated single-file releases, including `release/index.html`, may contain both MIT-licensed code and protected embedded assets. The code portions remain MIT-licensed, but embedded artwork and asset data remain under the Asset License. The complete bundled game may be played, shared, and forked for non-commercial purposes only unless separate written commercial permission is granted.
 
 This project is public for viewing, learning, non-commercial playtesting, and non-commercial collaboration. The artwork and visual identity remain protected.

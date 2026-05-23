@@ -1,6 +1,6 @@
 # Code License
 
-The software source code for **Living Sigil: Tomb Prototype** is licensed under the MIT License.
+The software source code for **Living Sigil** is licensed under the MIT License.
 
 This license applies to the project’s software code, including JavaScript, HTML, CSS, build scripts, gameplay systems, input systems, rendering systems, UI code, debug code, and documentation examples, except where a file or section contains embedded visual assets or states otherwise.
 

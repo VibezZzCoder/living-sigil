@@ -1,6 +1,6 @@
 # License
 
-**Living Sigil: Tomb Prototype**  
+**Living Sigil**  
 Copyright © 2005–2026 E RM. All rights reserved except as expressly licensed below.
 
 This repository uses **split licensing** because it contains both software source code and protected original visual artwork.

@@ -1,6 +1,6 @@
 # Asset License
 
-**Living Sigil: Tomb Prototype — Artwork and Visual Asset License**  
+**Living Sigil — Artwork and Visual Asset License**  
 Copyright © 2005–2026 E RM. All rights reserved except as expressly permitted below.
 
 ## 1. Scope
