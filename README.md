@@ -15,15 +15,17 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 ## Current Build
 
 - One 960x540 tomb arena
-- Three short waves
+- Four-wave Stage 1 run ending with the Gold Wing Warden elite fight
 - Dormant and awakened player forms
-- Shadow Wing enemies
+- Shadow Wing enemies and the Gold Wing Warden
 - Player bullets, contact damage, health, score, pause, game over, and stage clear
+- Stage 1 identity polish for Tomb of the First Sigil, including intro/clear presentation, ambient dust, Awakening flare, and tiny WebAudio cues
+- Static loading screen with asset preload progress before the title becomes interactive
 - Mobile portrait, mobile landscape, and desktop layouts
 
 ## Status
 
-This is an early playable MVP. The core tomb loop, touch controls, enemy readability, and mobile layouts are still being tuned before adding more stages, bosses, upgrades, or audio.
+This is an early playable MVP. The core tomb loop, touch controls, enemy readability, presentation polish, and mobile layouts are still being tuned before adding more stages, bosses, upgrades, or larger audio/music systems.
 
 ## Project Notes
 
