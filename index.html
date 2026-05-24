@@ -127,13 +127,15 @@ button {
   inset: 8px 8px auto 8px;
   display: grid;
   gap: 6px;
+  justify-items: center;
   pointer-events: none;
 }
 
 .hud-row {
-  display: flex;
+  width: min(100%, 390px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   font-size: clamp(11px, 2.3vmin, 14px);
   font-weight: 700;
@@ -143,8 +145,10 @@ button {
 .hud-row span {
   min-width: 0;
   padding: 4px 7px;
-  border: 1px solid rgba(244, 199, 91, 0.24);
-  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(244, 199, 91, 0.3);
+  background: rgba(0, 0, 0, 0.48);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
 }
 
 #hud-wave.is-wave-flash {
@@ -163,7 +167,7 @@ button {
 
 .meter {
   position: relative;
-  width: min(260px, 48%);
+  width: min(280px, 58%);
   height: 18px;
   border: 1px solid var(--line);
   background: rgba(0, 0, 0, 0.48);
@@ -642,28 +646,15 @@ kbd {
   }
 
   .touch-controls {
-    grid-template-rows: minmax(42px, auto) minmax(var(--control-size), 1fr) minmax(34px, auto);
+    height: auto;
+    align-self: start;
+    align-content: start;
+    grid-template-rows: auto var(--control-size) auto;
     gap: clamp(14px, 2.4dvh, 22px) 14px;
-  }
-
-  .awaken-button {
-    transform: translateY(10px);
-  }
-
-  .pause-button {
-    transform: translateY(-96px);
   }
 
   .control-button:active {
     transform: translateY(1px);
-  }
-
-  .awaken-button:active {
-    transform: translateY(11px);
-  }
-
-  .pause-button:active {
-    transform: translateY(-95px);
   }
 }
 
@@ -733,31 +724,47 @@ kbd {
     height: var(--landscape-control-gutter);
     min-height: var(--landscape-control-gutter);
     width: min(calc(100vw - var(--safe-left) - var(--safe-right) - 10px), 960px);
-    grid-template-rows: 30px var(--control-size) 24px;
-    gap: 1px 14px;
+    display: block;
     padding: 0;
     pointer-events: auto;
   }
 
   .awaken-button {
+    position: absolute;
+    top: clamp(38px, calc(var(--control-size) * 0.54), 54px);
+    left: 50%;
     min-width: 88px;
     min-height: 32px;
-    transform: translateY(39px);
+    transform: translateX(-50%);
   }
 
   .pause-button {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
     min-width: 72px;
     min-height: 28px;
     font-size: 0.78rem;
-    transform: translateY(-20px);
+    transform: translateX(-50%);
   }
 
-  .awaken-button:active {
-    transform: translateY(40px);
-  }
-
+  .awaken-button:active,
   .pause-button:active {
-    transform: translateY(-19px);
+    transform: translateX(-50%) translateY(1px);
+  }
+
+  #move-joystick,
+  #shoot-joystick {
+    position: absolute;
+    bottom: 3px;
+  }
+
+  #move-joystick {
+    left: max(8px, var(--safe-left));
+  }
+
+  #shoot-joystick {
+    right: max(8px, var(--safe-right));
   }
 
   .joystick {
@@ -812,6 +819,7 @@ kbd {
   }
 
   .hud-row {
+    width: min(100%, 470px);
     font-size: clamp(13px, 1vw, 18px);
   }
 
@@ -820,7 +828,7 @@ kbd {
   }
 
   .meter {
-    width: min(360px, 48%);
+    width: min(390px, 56%);
     height: 22px;
   }
 
