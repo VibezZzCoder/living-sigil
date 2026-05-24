@@ -19,11 +19,11 @@
   --danger: #d86a56;
   --panel: rgba(8, 7, 6, 0.78);
   --line: rgba(244, 199, 91, 0.38);
-  --control-size: clamp(86px, 18vmin, 124px);
+  --control-size: clamp(94px, 19vmin, 132px);
   --button-height: 42px;
   --mobile-stage-top-gap: max(10px, calc(var(--safe-top) + 8px));
-  --landscape-stage-reserve: clamp(94px, 26dvh, 108px);
-  --landscape-control-gutter: clamp(112px, 30dvh, 122px);
+  --landscape-stage-reserve: clamp(96px, 25dvh, 118px);
+  --landscape-control-gutter: clamp(116px, 30dvh, 136px);
   --shell-block: 100vh;
   --shell-block: 100svh;
   --shell-block: 100dvh;
@@ -458,7 +458,7 @@ kbd {
 
 @media (orientation: landscape) and (max-height: 620px) {
   :root {
-    --control-size: clamp(58px, 15dvh, 82px);
+    --control-size: clamp(78px, 17.2dvh, 102px);
     --button-height: 34px;
   }
 
@@ -473,7 +473,7 @@ kbd {
   }
 
   .stage {
-    width: min(97vw, calc((var(--shell-block) - var(--safe-top) - var(--safe-bottom) - var(--landscape-stage-reserve)) * 16 / 9), 960px);
+    width: min(99vw, calc((var(--shell-block) - var(--safe-top) - var(--safe-bottom) - var(--landscape-stage-reserve)) * 16 / 9), 960px);
     max-height: calc(var(--shell-block) - var(--safe-top) - var(--safe-bottom) - var(--landscape-stage-reserve));
     margin: 0 auto;
   }
@@ -486,9 +486,9 @@ kbd {
     transform: translateX(-50%);
     height: var(--landscape-control-gutter);
     min-height: var(--landscape-control-gutter);
-    width: min(calc(100vw - var(--safe-left) - var(--safe-right) - 14px), 960px);
-    grid-template-rows: 32px var(--control-size) 26px;
-    gap: 2px 14px;
+    width: min(calc(100vw - var(--safe-left) - var(--safe-right) - 10px), 960px);
+    grid-template-rows: 30px var(--control-size) 24px;
+    gap: 1px 14px;
     padding: 0;
     pointer-events: auto;
   }
@@ -496,12 +496,22 @@ kbd {
   .awaken-button {
     min-width: 88px;
     min-height: 32px;
+    transform: translateY(39px);
   }
 
   .pause-button {
     min-width: 72px;
     min-height: 28px;
     font-size: 0.78rem;
+    transform: translateY(-20px);
+  }
+
+  .awaken-button:active {
+    transform: translateY(40px);
+  }
+
+  .pause-button:active {
+    transform: translateY(-19px);
   }
 
   .joystick {
@@ -1720,11 +1730,6 @@ class Renderer {
       this.drawSprite(ctx, asset, {
         glow: { key: "awakened", color: "rgba(255, 218, 98, 0.92)", blur: 10, padding: 22 }
       });
-      ctx.strokeStyle = "rgba(255, 241, 168, 0.92)";
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.arc(0, 0, player.radius + 4 + Math.sin(performance.now() / 100) * 2, 0, Math.PI * 2);
-      ctx.stroke();
     } else {
       ctx.fillStyle = "rgba(244, 199, 91, 0.08)";
       ctx.beginPath();
@@ -1733,11 +1738,6 @@ class Renderer {
       this.drawSprite(ctx, asset, {
         glow: { key: "dormant", color: "rgba(244, 199, 91, 0.76)", blur: 5, padding: 12 }
       });
-      ctx.strokeStyle = "rgba(225, 193, 103, 0.72)";
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.arc(0, 0, player.radius + 3, 0, Math.PI * 2);
-      ctx.stroke();
     }
 
     if (player.state === "hurt") {

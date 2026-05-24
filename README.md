@@ -1,36 +1,34 @@
 # Living Sigil
 
-Plain HTML/CSS/JavaScript MVP for a 2D browser/mobile twin-stick shooter.
+Living Sigil is a small browser twin-stick shooter set in a dark tomb arena. You play as a living symbol, survive waves of Shadow Wings, build the Awakening meter, and trigger a short gold-powered form when the meter is full.
 
-Playable at https://vibezzzcoder.github.io/living-sigil/ 
+Play: https://vibezzzcoder.github.io/living-sigil/
 
-## Current Controls
+## Controls
 
-- WASD: move
-- Arrow keys: shoot
-- Space: activate Awakening when meter is full
-- Esc, P, or Enter: pause
-- R: restart
-- Backtick or F1: debug overlay
-- Mobile: left joystick moves, right joystick shoots, Awaken sits near the playfield, and Pause is separated as a secondary system button
+- Move: WASD on keyboard, left joystick on touch
+- Shoot: Arrow keys on keyboard, right joystick on touch
+- Awaken: Space on keyboard, Awaken button on touch
+- Pause: P, Enter, Escape, or the Pause button
+- Restart: R
 
-## Current Scope
+## Current Build
 
-- One 960x540 logical arena
-- 3 short tomb waves
-- Live dormant and awakened player symbol sprites
-- Live black Shadow Wing enemy sprite
-- Player bullets, enemy contact damage, health, score, stage clear, game over
-- HTML HUD/menus over a canvas playfield
-- Placeholder tomb background
-- Processed asset notes in `assets/work/measurements/processed-assets.json`
+- One 960x540 tomb arena
+- Three short waves
+- Dormant and awakened player forms
+- Shadow Wing enemies
+- Player bullets, contact damage, health, score, pause, game over, and stage clear
+- Mobile portrait, mobile landscape, and desktop layouts
 
-## Not Ready Yet
+## Status
 
-- The gold wing guardian remains a work-only elite/miniboss candidate
-- Background art is still a simple tomb placeholder
-- No audio
-- No multi-stage progression yet
+This is an early playable MVP. The core tomb loop, touch controls, enemy readability, and mobile layouts are still being tuned before adding more stages, bosses, upgrades, or audio.
+
+## Project Notes
+
+The source is plain HTML, CSS, and JavaScript with no external runtime dependencies. The upload-ready build is generated as a single file for GitHub Pages.
+
 
 ## License
 
@@ -40,7 +38,7 @@ Software source code is licensed under the MIT License. See [`CODE_LICENSE.md`](
 
 Original artwork, the central symbol, derivative symbol designs, sprites, character designs, enemy designs, visual identity, logos, icons, background art, visual effects art, reference images, generated art, processed art, and embedded image data are not licensed under MIT.
 
-These assets are copyright © 2005–2026 E RM. All rights reserved except for limited non-commercial use as part of this game project and its non-commercial forks. See [`ASSET_LICENSE.md`](ASSET_LICENSE.md).
+These assets are copyright © 2005-2026 E RM. All rights reserved except for limited non-commercial use as part of this game project and its non-commercial forks. See [`ASSET_LICENSE.md`](ASSET_LICENSE.md).
 
 The central symbol and derivative visual designs are original copyrighted works dating from 2005.
 
