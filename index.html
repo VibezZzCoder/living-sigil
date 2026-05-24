@@ -118,6 +118,20 @@ button {
   background: rgba(0, 0, 0, 0.38);
 }
 
+#hud-wave.is-wave-flash {
+  border-color: rgba(255, 241, 168, 0.92);
+  background: rgba(87, 58, 12, 0.74);
+  color: #fff1a8;
+  box-shadow: 0 0 18px rgba(255, 218, 98, 0.42);
+  animation: wave-hud-flash 0.48s ease-in-out infinite alternate;
+}
+
+#hud-wave.is-warden-wave {
+  border-color: rgba(255, 218, 98, 0.95);
+  background: rgba(72, 18, 72, 0.78);
+  box-shadow: 0 0 20px rgba(184, 92, 200, 0.52);
+}
+
 .meter {
   position: relative;
   width: min(260px, 48%);
@@ -200,6 +214,21 @@ button {
   margin: 0;
   color: var(--muted);
   font-size: clamp(13px, 2.7vmin, 16px);
+}
+
+.source-file-note {
+  max-width: 26rem;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 218, 98, 0.26);
+  border-radius: 4px;
+  background: rgba(18, 13, 7, 0.62);
+  color: rgba(255, 241, 168, 0.92);
+  font-size: clamp(11px, 2.1vmin, 13px);
+  font-weight: 800;
+}
+
+.source-file-note[hidden] {
+  display: none;
 }
 
 .screen-message button,
@@ -401,6 +430,16 @@ kbd {
   }
 }
 
+@keyframes wave-hud-flash {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.08);
+  }
+}
+
 @media (orientation: portrait) and (max-width: 899px) {
   .game-shell {
     padding-top: var(--mobile-stage-top-gap);
@@ -440,7 +479,8 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   .meter.is-ready,
   .awaken-button.is-ready,
-  .desktop-awaken-hint.is-ready kbd {
+  .desktop-awaken-hint.is-ready kbd,
+  #hud-wave.is-wave-flash {
     animation: none;
   }
 }
@@ -634,6 +674,7 @@ kbd {
             <span class="screen-kicker">Tomb of the First Sigil</span>
             <h1>Living Sigil</h1>
             <p>Enter the buried chamber. WASD moves, arrows shoot, Space awakens, P or Enter pauses.</p>
+            <p id="source-file-note" class="source-file-note">Source files need a local server. Use release/index.html for direct file play.</p>
             <button id="start-button" type="button">Start</button>
           </div>
         </section>
@@ -953,6 +994,7 @@ class AudioCues {
     this.seenEffects = new Set();
     this.clearRunId = 0;
     this.lastHitTime = 0;
+    this.masterVolume = 3.1;
   }
 
   unlock() {
@@ -1053,7 +1095,7 @@ class AudioCues {
       oscillator.frequency.setValueAtTime(frequency, now);
       oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), now + duration);
       gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(gainValue * this.masterVolume, now + 0.015);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
       oscillator.connect(gain);
       gain.connect(this.context.destination);
@@ -1793,7 +1835,7 @@ function resetWaves(world) {
   world.waveTimer = 0;
   world.spawnTimer = 0.7;
   world.waveMessage = "Wave 1";
-  world.waveMessageTimer = 1.4;
+  world.waveMessageTimer = 1.8;
   world.clearTimer = 0;
   world.stageCleared = false;
   world.wardenSpawned = false;
@@ -1812,7 +1854,7 @@ function updateWaves(world, dt) {
       world.waveMessageTimer = Math.max(world.waveMessageTimer, 0.1);
       if (!world.stageClearAnnounced) {
         world.stageClearAnnounced = true;
-        world.waveMessageTimer = Math.max(world.waveMessageTimer, 1.25);
+        world.waveMessageTimer = Math.max(world.waveMessageTimer, 1.6);
       }
       if (world.clearTimer >= 1.35) {
         world.gameState = "stage_clear";
@@ -1841,7 +1883,7 @@ function updateWaves(world, dt) {
     world.spawnTimer = 1;
     const nextWave = WAVES[world.waveIndex];
     world.waveMessage = nextWave ? nextWave.label : "Final Echo";
-    world.waveMessageTimer = 1.25;
+    world.waveMessageTimer = nextWave?.type === "warden" ? 2 : 1.75;
   }
 }
 
@@ -1850,7 +1892,7 @@ function updateWardenWave(world) {
     spawnGoldWingWarden(world);
     world.wardenSpawned = true;
     world.waveMessage = "Gold Wing Warden";
-    world.waveMessageTimer = 1.6;
+    world.waveMessageTimer = 2.15;
     return;
   }
 
@@ -1864,7 +1906,7 @@ function updateWardenWave(world) {
     world.waveTimer = 0;
     world.spawnTimer = 0;
     world.waveMessage = "Final Echo";
-    world.waveMessageTimer = 1.25;
+    world.waveMessageTimer = 1.65;
   }
 }
 
@@ -2612,17 +2654,34 @@ class Renderer {
       return;
     }
 
-    const alpha = Math.min(1, world.waveMessageTimer / 0.45);
+    const isWarden = world.waveMessage.includes("Warden");
+    const width = isWarden ? 370 : 280;
+    const height = isWarden ? 58 : 50;
+    const x = LOGICAL_WIDTH / 2 - width / 2;
+    const y = isWarden ? 112 : 118;
+    const pulse = 1 + Math.sin(performance.now() / 55) * 0.035;
+    const alpha = Math.min(1, world.waveMessageTimer / 0.5);
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = "rgba(6, 5, 4, 0.42)";
-    ctx.fillRect(LOGICAL_WIDTH / 2 - 122, 72, 244, 42);
-    ctx.strokeStyle = "rgba(244, 199, 91, 0.42)";
-    ctx.strokeRect(LOGICAL_WIDTH / 2 - 122, 72, 244, 42);
-    ctx.fillStyle = "#f6ecd3";
-    ctx.font = "700 20px ui-sans-serif, system-ui, sans-serif";
+    ctx.translate(LOGICAL_WIDTH / 2, y + height / 2);
+    ctx.scale(pulse, pulse);
+    ctx.translate(-LOGICAL_WIDTH / 2, -(y + height / 2));
+    ctx.fillStyle = isWarden ? "rgba(18, 7, 22, 0.72)" : "rgba(6, 5, 4, 0.62)";
+    ctx.fillRect(x, y, width, height);
+    ctx.strokeStyle = isWarden ? "rgba(255, 218, 98, 0.78)" : "rgba(244, 199, 91, 0.66)";
+    ctx.lineWidth = isWarden ? 3 : 2;
+    ctx.strokeRect(x, y, width, height);
+    ctx.strokeStyle = isWarden ? "rgba(184, 92, 200, 0.75)" : "rgba(255, 218, 98, 0.48)";
+    ctx.beginPath();
+    ctx.moveTo(x - 22, y + height / 2);
+    ctx.lineTo(x - 4, y + height / 2);
+    ctx.moveTo(x + width + 4, y + height / 2);
+    ctx.lineTo(x + width + 22, y + height / 2);
+    ctx.stroke();
+    ctx.fillStyle = isWarden ? "#fff1a8" : "#f6ecd3";
+    ctx.font = `${isWarden ? "800 24px" : "800 22px"} ui-sans-serif, system-ui, sans-serif`;
     ctx.textAlign = "center";
-    ctx.fillText(world.waveMessage, LOGICAL_WIDTH / 2, 99);
+    ctx.fillText(world.waveMessage, LOGICAL_WIDTH / 2, y + (isWarden ? 36 : 32));
     ctx.restore();
   }
 
@@ -2923,6 +2982,8 @@ class Hud {
       : wave
         ? wave.label
         : "Final";
+    this.wave.classList.toggle("is-wave-flash", world.gameState === "playing" && world.waveMessageTimer > 0);
+    this.wave.classList.toggle("is-warden-wave", world.gameState === "playing" && world.waveMessage?.includes("Warden"));
 
     const meter = Math.round(player.awakeningMeter);
     const isReady = meter >= 100 && getPlayerForm(player) !== "awakened";
@@ -3035,6 +3096,7 @@ const renderer = new Renderer(viewport.ctx, { reducedMotion });
 const audio = new AudioCues();
 const hud = new Hud(document);
 const debug = new DebugOverlay(document.getElementById("debug-panel"));
+document.getElementById("source-file-note").hidden = true;
 
 document.getElementById("start-button").addEventListener("click", () => {
   if (world.gameState === "paused") {
