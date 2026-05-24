@@ -538,16 +538,61 @@ kbd {
   .game-shell {
     grid-template-rows: auto auto;
     align-content: center;
-    gap: 12px;
+    gap: clamp(10px, 1.4dvh, 16px);
   }
 
   .stage {
-    width: min(82vw, calc(76dvh * 16 / 9), 960px);
-    max-height: 76dvh;
+    width: min(92vw, calc(88dvh * 16 / 9), 1680px);
+    max-height: 88dvh;
+  }
+
+  .hud {
+    inset: 10px 10px auto 10px;
+    gap: 8px;
+  }
+
+  .hud-row {
+    font-size: clamp(13px, 1vw, 18px);
+  }
+
+  .hud-row span {
+    padding: 5px 9px;
+  }
+
+  .meter {
+    width: min(360px, 48%);
+    height: 22px;
+  }
+
+  .meter span:last-child {
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .screen-message {
+    gap: 12px;
+  }
+
+  .screen-message h1 {
+    font-size: clamp(40px, 5.2vw, 82px);
+  }
+
+  .screen-message p {
+    max-width: min(78%, 72rem);
+    font-size: clamp(15px, 1.4vw, 22px);
+    line-height: 1.25;
+  }
+
+  .screen-message button {
+    min-width: 116px;
+    min-height: 46px;
+    font-size: clamp(16px, 1.2vw, 20px);
   }
 
   .desktop-controls {
     display: block;
+    max-width: min(92vw, 1680px);
+    font-size: clamp(13px, 1vw, 16px);
   }
 
   .touch-controls {
