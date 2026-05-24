@@ -25,7 +25,13 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 
 ## Status
 
-This is an early playable MVP. The core tomb loop, touch controls, enemy readability, presentation polish, and mobile layouts are still being tuned before adding more stages, bosses, upgrades, or larger audio/music systems.
+This is an evolving browser/mobile prototype. The current build is a Stage 1 prototype centered on Tomb of the First Sigil / Deep Tomb, with touch controls, enemy readability, presentation polish, and mobile layouts still being tuned before larger systems are added.
+
+## Roadmap
+
+- Current: Stage 1 prototype with the Gold Wing Warden climax and First Sigil reward flow.
+- Next planned: Stage 2 - The Scriptorium of Dust, a moonlit dark desert archive.
+- Scope: focused 4-stage Cosmic Ascent arc before considering broader expansion.
 
 ## Project Notes
 
