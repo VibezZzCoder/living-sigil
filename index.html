@@ -1120,16 +1120,22 @@ class TouchJoysticks {
       move: null,
       shoot: null
     };
+    this.bounds = {
+      move: null,
+      shoot: null
+    };
   }
 
   bind(element, action) {
     const stick = element.querySelector(".joystick-stick");
 
     const update = (event) => {
-      const rect = element.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const maxDistance = rect.width * 0.38;
+      const bounds = this.bounds[action];
+      if (!bounds) {
+        return;
+      }
+
+      const { cx, cy, maxDistance } = bounds;
       const rawX = (event.clientX - cx) / maxDistance;
       const rawY = (event.clientY - cy) / maxDistance;
       const clamped = clampVector(rawX, rawY, 1);
@@ -1144,6 +1150,7 @@ class TouchJoysticks {
 
     const reset = () => {
       this.pointerIds[action] = null;
+      this.bounds[action] = null;
       this.vectors[action] = { x: 0, y: 0 };
       element.classList.remove("is-active");
       stick.style.transform = "translate(-50%, -50%)";
@@ -1155,6 +1162,12 @@ class TouchJoysticks {
       }
       event.preventDefault();
       this.pointerIds[action] = event.pointerId;
+      const rect = element.getBoundingClientRect();
+      this.bounds[action] = {
+        cx: rect.left + rect.width / 2,
+        cy: rect.top + rect.height / 2,
+        maxDistance: rect.width * 0.38
+      };
       element.setPointerCapture(event.pointerId);
       update(event);
     });
@@ -1661,18 +1674,10 @@ function updatePlayer(world, input, dt) {
       player.returnState = "awakened";
       player.awakeningTimer = BALANCE.player.forms.awakened.duration;
     }
-  } else if (player.state === "awakened") {
+  } else if (player.state === "awakened" || (player.state === "hurt" && player.returnState === "awakened")) {
     player.awakeningTimer -= dt;
     if (player.awakeningTimer <= 0) {
-      player.state = "dormant";
-      player.returnState = "dormant";
-      player.awakeningTimer = 0;
-      spawnEffect(world, {
-        type: "awakening_end",
-        x: player.x,
-        y: player.y,
-        duration: 0.38
-      });
+      endAwakening(world, player);
     }
   }
 
@@ -1729,6 +1734,20 @@ function approach(value, target, maxDelta) {
     return Math.min(value + maxDelta, target);
   }
   return Math.max(value - maxDelta, target);
+}
+
+function endAwakening(world, player) {
+  if (player.state !== "hurt") {
+    player.state = "dormant";
+  }
+  player.returnState = "dormant";
+  player.awakeningTimer = 0;
+  spawnEffect(world, {
+    type: "awakening_end",
+    x: player.x,
+    y: player.y,
+    duration: 0.38
+  });
 }
 
 function toggleDebugPlayerForm(player) {
@@ -1903,6 +1922,7 @@ function updateShadowWing(world, enemy, dt) {
     if (enemy.stateTimer <= 0) {
       enemy.state = "chasing";
     }
+    return;
   }
 
   if (enemy.state === "dying") {
@@ -1933,6 +1953,7 @@ function updateGoldWingWarden(world, enemy, dt) {
     if (enemy.stateTimer <= 0) {
       enemy.state = "positioning";
     }
+    return;
   }
 
   if (enemy.state === "dying") {
@@ -3198,12 +3219,25 @@ class Hud {
     this.awakeningLabel = documentRef.getElementById("awakening-label");
     this.awakeningButton = documentRef.getElementById("awakening-button");
     this.desktopAwakenHint = documentRef.getElementById("desktop-awaken-hint");
+    this.meter = this.fill.parentElement;
     this.screen = documentRef.getElementById("screen-message");
     this.titleBackground = documentRef.getElementById("title-background");
     this.body = documentRef.body;
     this.kicker = this.screen.querySelector(".screen-kicker");
+    this.title = this.screen.querySelector("h1");
+    this.text = this.screen.querySelector("p");
     this.startButton = documentRef.getElementById("start-button");
     this.titlePromptQuery = window.matchMedia("(hover: none), (pointer: coarse), (max-width: 899px)");
+    this.previous = {
+      health: "",
+      score: "",
+      wave: "",
+      awakeningWidth: "",
+      awakeningLabel: "",
+      screenKey: "",
+      hidden: null,
+      classes: new WeakMap()
+    };
     this.setTitleBackground(options.images);
   }
 
@@ -3231,32 +3265,56 @@ class Hud {
 
   update(world) {
     const player = world.player;
-    this.health.textContent = `HP ${player.health}/${player.maxHealth}`;
-    this.score.textContent = `Score ${world.score}`;
+    const health = `HP ${player.health}/${player.maxHealth}`;
+    if (this.previous.health !== health) {
+      this.health.textContent = health;
+      this.previous.health = health;
+    }
+
+    const score = `Score ${world.score}`;
+    if (this.previous.score !== score) {
+      this.score.textContent = score;
+      this.previous.score = score;
+    }
 
     const wave = WAVES[world.waveIndex];
-    this.wave.textContent = world.gameState === "stage_clear" || world.stageClearPresentationTimer > 0
+    const waveText = world.gameState === "stage_clear" || world.stageClearPresentationTimer > 0
       ? "Clear"
       : wave
         ? wave.label
         : "Final";
-    this.wave.classList.toggle("is-wave-flash", world.gameState === "playing" && world.waveMessageTimer > 0);
-    this.wave.classList.toggle("is-warden-wave", world.gameState === "playing" && world.waveMessage?.includes("Warden"));
+    if (this.previous.wave !== waveText) {
+      this.wave.textContent = waveText;
+      this.previous.wave = waveText;
+    }
+    this.toggleClass(this.wave, "is-wave-flash", world.gameState === "playing" && world.waveMessageTimer > 0);
+    this.toggleClass(this.wave, "is-warden-wave", world.gameState === "playing" && world.waveMessage?.includes("Warden"));
 
     const meter = Math.round(player.awakeningMeter);
-    const isReady = meter >= 100 && getPlayerForm(player) !== "awakened";
-    this.fill.style.width = `${meter}%`;
-    this.fill.parentElement.classList.toggle("is-ready", isReady);
-    this.fill.parentElement.classList.toggle("is-awakened", getPlayerForm(player) === "awakened");
-    this.awakeningButton.classList.toggle("is-ready", isReady);
-    this.desktopAwakenHint.classList.toggle("is-ready", isReady);
+    const playerForm = getPlayerForm(player);
+    const isAwakened = playerForm === "awakened";
+    const isReady = meter >= 100 && !isAwakened;
+    const awakeningWidth = `${meter}%`;
+    if (this.previous.awakeningWidth !== awakeningWidth) {
+      this.fill.style.width = awakeningWidth;
+      this.previous.awakeningWidth = awakeningWidth;
+    }
+    this.toggleClass(this.meter, "is-ready", isReady);
+    this.toggleClass(this.meter, "is-awakened", isAwakened);
+    this.toggleClass(this.awakeningButton, "is-ready", isReady);
+    this.toggleClass(this.desktopAwakenHint, "is-ready", isReady);
 
-    if (getPlayerForm(player) === "awakened") {
-      this.awakeningLabel.textContent = `Awakened ${player.awakeningTimer.toFixed(1)}s`;
+    let awakeningLabel;
+    if (isAwakened) {
+      awakeningLabel = `Awakened ${player.awakeningTimer.toFixed(1)}s`;
     } else if (meter >= 100) {
-      this.awakeningLabel.textContent = "Awakening Ready";
+      awakeningLabel = "Awakening Ready";
     } else {
-      this.awakeningLabel.textContent = `Awakening ${meter}%`;
+      awakeningLabel = `Awakening ${meter}%`;
+    }
+    if (this.previous.awakeningLabel !== awakeningLabel) {
+      this.awakeningLabel.textContent = awakeningLabel;
+      this.previous.awakeningLabel = awakeningLabel;
     }
 
     this.updateScreen(world);
@@ -3264,46 +3322,94 @@ class Hud {
 
   updateScreen(world) {
     if (world.gameState === "playing") {
-      this.screen.hidden = true;
-      this.screen.classList.remove("is-title");
-      this.body.classList.remove("is-title-screen");
+      this.setHidden(this.screen, true);
+      this.toggleClass(this.screen, "is-title", false);
+      this.toggleClass(this.body, "is-title-screen", false);
+      this.previous.screenKey = "playing";
       return;
     }
 
-    this.screen.hidden = false;
-    this.screen.classList.toggle("is-title", world.gameState === "title");
-    this.body.classList.toggle("is-title-screen", world.gameState === "title");
-    const title = this.screen.querySelector("h1");
-    const text = this.screen.querySelector("p");
-    const button = this.startButton;
+    this.setHidden(this.screen, false);
+    this.toggleClass(this.screen, "is-title", world.gameState === "title");
+    this.toggleClass(this.body, "is-title-screen", world.gameState === "title");
 
+    let kickerText = "";
+    let kickerHidden = false;
+    let titleText = "";
+    let bodyText = "";
+    let buttonText = "";
+    let buttonHidden = false;
     if (world.gameState === "title") {
-      this.kicker.hidden = true;
-      title.textContent = "LIVING SIGIL";
-      text.textContent = this.titlePromptQuery.matches ? "TAP SCREEN" : "PRESS ENTER";
-      button.hidden = true;
+      kickerHidden = true;
+      titleText = "LIVING SIGIL";
+      bodyText = this.titlePromptQuery.matches ? "TAP SCREEN" : "PRESS ENTER";
+      buttonHidden = true;
     } else if (world.gameState === "paused") {
-      this.kicker.textContent = "Tomb of the First Sigil";
-      this.kicker.hidden = false;
-      title.textContent = "Paused";
-      text.textContent = "Resume or restart when ready.";
-      button.textContent = "Resume";
-      button.hidden = false;
+      kickerText = "Tomb of the First Sigil";
+      titleText = "Paused";
+      bodyText = "Resume or restart when ready.";
+      buttonText = "Resume";
     } else if (world.gameState === "game_over") {
-      this.kicker.textContent = "The sigil falls silent";
-      this.kicker.hidden = false;
-      title.textContent = "Game Over";
-      text.textContent = `Score ${world.score}. Press R or restart.`;
-      button.textContent = "Restart";
-      button.hidden = false;
+      kickerText = "The sigil falls silent";
+      titleText = "Game Over";
+      bodyText = `Score ${world.score}. Press R or restart.`;
+      buttonText = "Restart";
     } else if (world.gameState === "stage_clear") {
-      this.kicker.textContent = "Tomb of the First Sigil";
-      this.kicker.hidden = false;
-      title.textContent = "First Sigil Reclaimed";
-      text.textContent = `The tomb falls silent. Score ${world.score}.`;
-      button.textContent = "Restart";
-      button.hidden = false;
+      kickerText = "Tomb of the First Sigil";
+      titleText = "First Sigil Reclaimed";
+      bodyText = `The tomb falls silent. Score ${world.score}.`;
+      buttonText = "Restart";
+    } else {
+      return;
     }
+
+    const screenKey = [
+      world.gameState,
+      kickerText,
+      kickerHidden,
+      titleText,
+      bodyText,
+      buttonText,
+      buttonHidden
+    ].join("|");
+    if (this.previous.screenKey === screenKey) {
+      return;
+    }
+    this.previous.screenKey = screenKey;
+
+    this.setText(this.kicker, kickerText);
+    this.setHidden(this.kicker, kickerHidden);
+    this.setText(this.title, titleText);
+    this.setText(this.text, bodyText);
+    this.setText(this.startButton, buttonText);
+    this.setHidden(this.startButton, buttonHidden);
+  }
+
+  setText(element, value) {
+    if (element.textContent !== value) {
+      element.textContent = value;
+    }
+  }
+
+  setHidden(element, hidden) {
+    if (element.hidden !== hidden) {
+      element.hidden = hidden;
+    }
+  }
+
+  toggleClass(element, className, force) {
+    let elementClasses = this.previous.classes.get(element);
+    if (!elementClasses) {
+      elementClasses = new Map();
+      this.previous.classes.set(element, elementClasses);
+    }
+
+    if (elementClasses.get(className) === force) {
+      return;
+    }
+
+    element.classList.toggle(className, force);
+    elementClasses.set(className, force);
   }
 }
 
@@ -3509,10 +3615,10 @@ async function preloadAssets(assetSources, onProgress) {
 async function loadImage(src) {
   const image = new Image();
   image.decoding = "async";
-  image.src = src;
   await new Promise((resolve, reject) => {
     image.onload = resolve;
     image.onerror = () => reject(new Error(`Failed to load ${src}`));
+    image.src = src;
   });
 
   if (image.decode) {
