@@ -179,6 +179,16 @@ button {
   display: none;
 }
 
+.screen-kicker {
+  padding: 4px 10px;
+  border-top: 1px solid rgba(244, 199, 91, 0.36);
+  border-bottom: 1px solid rgba(244, 199, 91, 0.36);
+  color: #fff1a8;
+  font-size: clamp(11px, 2.2vmin, 14px);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .screen-message h1 {
   margin: 0;
   font-size: clamp(26px, 8vmin, 58px);
@@ -621,8 +631,9 @@ kbd {
           </div>
 
           <div id="screen-message" class="screen-message">
+            <span class="screen-kicker">Tomb of the First Sigil</span>
             <h1>Living Sigil</h1>
-            <p>Move with WASD. Shoot with arrow keys. Space awakens. P or Enter pauses.</p>
+            <p>Enter the buried chamber. WASD moves, arrows shoot, Space awakens, P or Enter pauses.</p>
             <button id="start-button" type="button">Start</button>
           </div>
         </section>
@@ -930,6 +941,120 @@ class Viewport {
     const isTouchish = matchMedia("(pointer: coarse)").matches;
     const isPortrait = matchMedia("(orientation: portrait)").matches;
     this.layoutMode = isTouchish ? (isPortrait ? "mobile_portrait" : "mobile_landscape") : "desktop";
+  }
+}
+
+
+// src/platform/audio.js
+class AudioCues {
+  constructor() {
+    this.context = null;
+    this.enabled = false;
+    this.seenEffects = new Set();
+    this.clearRunId = 0;
+    this.lastHitTime = 0;
+  }
+
+  unlock() {
+    if (this.enabled) {
+      return;
+    }
+
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) {
+      return;
+    }
+
+    try {
+      this.context = this.context || new AudioContextClass();
+      if (this.context.state === "suspended") {
+        this.context.resume();
+      }
+      this.enabled = true;
+    } catch {
+      this.context = null;
+      this.enabled = false;
+    }
+  }
+
+  update(world, input) {
+    if (input.anyGameplayIntent) {
+      this.unlock();
+    }
+
+    if (!this.enabled || !this.context) {
+      return;
+    }
+
+    for (const effect of world.effects) {
+      if (this.seenEffects.has(effect.id)) {
+        continue;
+      }
+      this.seenEffects.add(effect.id);
+      this.playEffect(effect);
+    }
+
+    if (world.gameState === "stage_clear" && this.clearRunId !== world.runId) {
+      this.clearRunId = world.runId;
+      this.playStageClear();
+    }
+  }
+
+  playStart() {
+    this.unlock();
+    if (!this.enabled) {
+      return;
+    }
+    this.playTone(74, 0.18, 0.08, "sine", 0.012);
+    this.playTone(111, 0.24, 0.06, "triangle", 0.01);
+  }
+
+  playEffect(effect) {
+    const now = this.context.currentTime;
+    if (effect.type === "awakening_start") {
+      this.playAwakening();
+    } else if (effect.type === "enemy_death") {
+      this.playTone(184, 0.05, 0.035, "square", 0.018);
+      this.playTone(276, 0.08, 0.025, "triangle", 0.014);
+    } else if (effect.type === "enemy_hit" && now - this.lastHitTime > 0.055) {
+      this.lastHitTime = now;
+      this.playTone(142, 0.035, 0.025, "square", 0.012);
+    }
+  }
+
+  playAwakening() {
+    this.playTone(220, 0.18, 0.13, "triangle", 0.018, 440);
+    this.playTone(554, 0.22, 0.08, "sine", 0.012, 880);
+  }
+
+  playStageClear() {
+    this.playTone(294, 0.22, 0.05, "triangle", 0.014);
+    this.playTone(370, 0.26, 0.13, "triangle", 0.014);
+    this.playTone(494, 0.34, 0.24, "sine", 0.012);
+  }
+
+  playTone(frequency, duration, delay = 0, type = "sine", gainValue = 0.01, endFrequency = frequency) {
+    if (!this.context) {
+      return;
+    }
+
+    try {
+      const now = this.context.currentTime + delay;
+      const oscillator = this.context.createOscillator();
+      const gain = this.context.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, now);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), now + duration);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      oscillator.connect(gain);
+      gain.connect(this.context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + duration + 0.03);
+    } catch {
+      this.enabled = false;
+    }
   }
 }
 
@@ -1441,9 +1566,14 @@ function updateWaves(world, dt) {
   if (!wave) {
     if (world.enemies.length === 0) {
       world.clearTimer += dt;
-      world.waveMessage = "Stage Clear";
+      world.stageClearPresentationTimer += dt;
+      world.waveMessage = "Sigil Reclaimed";
       world.waveMessageTimer = Math.max(world.waveMessageTimer, 0.1);
-      if (world.clearTimer >= 0.85) {
+      if (!world.stageClearAnnounced) {
+        world.stageClearAnnounced = true;
+        world.waveMessageTimer = Math.max(world.waveMessageTimer, 1.25);
+      }
+      if (world.clearTimer >= 1.35) {
         world.gameState = "stage_clear";
       }
     }
@@ -1478,6 +1608,7 @@ function countActiveEnemies(world) {
 class World {
   constructor() {
     this.idCounter = 1;
+    this.runId = 0;
     this.debug = { ...DEFAULT_DEBUG };
     this.reset();
   }
@@ -1489,6 +1620,7 @@ class World {
 
   reset() {
     this.gameState = "title";
+    this.runId += 1;
     this.player = createPlayer();
     this.enemies = [];
     this.projectiles = [];
@@ -1497,6 +1629,9 @@ class World {
     this.shakeMagnitude = 0;
     this.score = 0;
     this.elapsed = 0;
+    this.stageIntroTimer = 0;
+    this.stageClearPresentationTimer = 0;
+    this.stageClearAnnounced = false;
     this.fps = 0;
     resetWaves(this);
   }
@@ -1504,6 +1639,7 @@ class World {
   start() {
     this.reset();
     this.gameState = "playing";
+    this.stageIntroTimer = 2.1;
   }
 
   restartRun() {
@@ -1540,6 +1676,7 @@ class World {
     }
 
     this.elapsed += dt;
+    this.stageIntroTimer = Math.max(0, this.stageIntroTimer - dt);
     updateWaves(this, dt);
     updatePlayer(this, input, dt);
     updateEnemies(this, dt);
@@ -1613,8 +1750,9 @@ const ASSETS = {
 // src/rendering/renderer.js
 
 class Renderer {
-  constructor(ctx) {
+  constructor(ctx, options = {}) {
     this.ctx = ctx;
+    this.reducedMotion = Boolean(options.reducedMotion);
     this.images = new Map();
     this.glowSprites = new Map();
     for (const asset of Object.values(ASSETS)) {
@@ -1639,6 +1777,8 @@ class Renderer {
     }
 
     this.drawTombBackground(ctx, world.elapsed);
+    this.drawAmbientDust(ctx, world.elapsed);
+    this.drawStageClearGlyph(ctx, world);
     this.drawEffects(ctx, world.effects, "under");
 
     for (const enemy of world.enemies) {
@@ -1657,6 +1797,7 @@ class Renderer {
 
     this.drawEffects(ctx, world.effects, "over");
     this.drawWaveBanner(ctx, world);
+    this.drawStageIntroOverlay(ctx, world);
 
     if (world.debug.enabled) {
       this.drawDebug(ctx, world, input);
@@ -1678,7 +1819,7 @@ class Renderer {
   }
 
   drawBackgroundReadabilityVeil(ctx) {
-    const gradient = ctx.createRadialGradient(
+    const centerGradient = ctx.createRadialGradient(
       LOGICAL_WIDTH / 2,
       LOGICAL_HEIGHT / 2,
       68,
@@ -1686,11 +1827,80 @@ class Renderer {
       LOGICAL_HEIGHT / 2,
       245
     );
-    gradient.addColorStop(0, "rgba(0, 0, 0, 0.13)");
-    gradient.addColorStop(0.54, "rgba(0, 0, 0, 0.08)");
-    gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-    ctx.fillStyle = gradient;
+    centerGradient.addColorStop(0, "rgba(0, 0, 0, 0.1)");
+    centerGradient.addColorStop(0.54, "rgba(0, 0, 0, 0.06)");
+    centerGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = centerGradient;
     ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+    const vignette = ctx.createRadialGradient(
+      LOGICAL_WIDTH / 2,
+      LOGICAL_HEIGHT / 2,
+      150,
+      LOGICAL_WIDTH / 2,
+      LOGICAL_HEIGHT / 2,
+      520
+    );
+    vignette.addColorStop(0, "rgba(0, 0, 0, 0)");
+    vignette.addColorStop(0.62, "rgba(0, 0, 0, 0.03)");
+    vignette.addColorStop(1, "rgba(0, 0, 0, 0.2)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+  }
+
+  drawAmbientDust(ctx, time) {
+    const count = this.reducedMotion ? 16 : 38;
+    const speedScale = this.reducedMotion ? 0.18 : 1;
+    ctx.save();
+    for (let i = 0; i < count; i += 1) {
+      const seed = i * 73.17;
+      const baseX = (seed * 37.3) % LOGICAL_WIDTH;
+      const baseY = (seed * 19.9) % LOGICAL_HEIGHT;
+      const drift = time * speedScale * (4.5 + (i % 7) * 0.6);
+      const x = (baseX + Math.sin(time * speedScale * 0.18 + seed) * 9 + drift * 0.28) % LOGICAL_WIDTH;
+      const y = (baseY + drift + Math.cos(time * speedScale * 0.16 + seed) * 6) % LOGICAL_HEIGHT;
+      const alpha = 0.05 + ((i % 5) * 0.012);
+      const radius = 0.8 + (i % 4) * 0.35;
+      ctx.fillStyle = `rgba(246, 236, 211, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  drawStageClearGlyph(ctx, world) {
+    if (world.stageClearPresentationTimer <= 0) {
+      return;
+    }
+
+    const t = Math.min(1, world.stageClearPresentationTimer / 1.35);
+    const pulse = 1 + Math.sin(t * Math.PI * 3) * 0.04;
+    ctx.save();
+    ctx.translate(LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2);
+    ctx.globalAlpha = Math.min(0.85, t * 1.3);
+    ctx.strokeStyle = `rgba(255, 218, 98, ${0.28 * (1 - t * 0.45)})`;
+    ctx.fillStyle = `rgba(244, 199, 91, ${0.05 * (1 - t * 0.35)})`;
+    ctx.lineWidth = 2;
+    ctx.scale(pulse, pulse);
+    ctx.beginPath();
+    ctx.arc(0, 0, 108 + t * 52, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, -132 - t * 20);
+    ctx.lineTo(112 + t * 16, 64 + t * 10);
+    ctx.lineTo(-112 - t * 16, 64 + t * 10);
+    ctx.closePath();
+    ctx.stroke();
+    for (let i = 0; i < 6; i += 1) {
+      const angle = (Math.PI * 2 * i) / 6 + t * 0.24;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle) * 82, Math.sin(angle) * 82);
+      ctx.lineTo(Math.cos(angle) * (132 + t * 36), Math.sin(angle) * (132 + t * 36));
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   drawProceduralTombBackground(ctx, time) {
@@ -1768,12 +1978,27 @@ class Renderer {
 
     if (form === "awakened") {
       const pulse = 1 + Math.sin(performance.now() / 70) * 0.035;
-      ctx.fillStyle = "rgba(244, 199, 91, 0.18)";
+      const startBoost = player.state === "awakening_start" ? 0.18 : 0;
+      ctx.fillStyle = `rgba(244, 199, 91, ${0.18 + startBoost})`;
       ctx.beginPath();
       ctx.arc(0, 0, asset.drawWidth * 0.58 * pulse, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = `rgba(255, 236, 156, ${player.state === "awakening_start" ? 0.38 : 0.16})`;
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 8; i += 1) {
+        const angle = (Math.PI * 2 * i) / 8 + performance.now() / 1200;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(angle) * 24, Math.sin(angle) * 24);
+        ctx.lineTo(Math.cos(angle) * 46 * pulse, Math.sin(angle) * 46 * pulse);
+        ctx.stroke();
+      }
       this.drawSprite(ctx, asset, {
-        glow: { key: "awakened", color: "rgba(255, 218, 98, 0.92)", blur: 10, padding: 22 }
+        glow: {
+          key: player.state === "awakening_start" ? "awakened_start" : "awakened",
+          color: "rgba(255, 218, 98, 0.92)",
+          blur: player.state === "awakening_start" ? 16 : 10,
+          padding: player.state === "awakening_start" ? 28 : 22
+        }
       });
     } else {
       ctx.fillStyle = "rgba(244, 199, 91, 0.08)";
@@ -1954,27 +2179,74 @@ class Renderer {
     ctx.restore();
   }
 
+  drawStageIntroOverlay(ctx, world) {
+    if (world.gameState !== "playing" || world.stageIntroTimer <= 0) {
+      return;
+    }
+
+    const duration = 2.1;
+    const age = duration - world.stageIntroTimer;
+    const fadeIn = Math.min(1, age / 0.35);
+    const fadeOut = Math.min(1, world.stageIntroTimer / 0.65);
+    const alpha = Math.min(fadeIn, fadeOut);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "rgba(5, 4, 3, 0.28)";
+    ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    ctx.fillStyle = "rgba(244, 199, 91, 0.12)";
+    ctx.fillRect(LOGICAL_WIDTH / 2 - 220, LOGICAL_HEIGHT / 2 - 58, 440, 116);
+    ctx.strokeStyle = "rgba(255, 218, 98, 0.42)";
+    ctx.strokeRect(LOGICAL_WIDTH / 2 - 220, LOGICAL_HEIGHT / 2 - 58, 440, 116);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#fff1a8";
+    ctx.font = "800 30px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillText("Tomb of the First Sigil", LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 - 6);
+    ctx.fillStyle = "rgba(246, 236, 211, 0.86)";
+    ctx.font = "700 16px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillText("Awaken the buried mark.", LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 + 26);
+    ctx.restore();
+  }
+
   drawAwakeningBurst(ctx, player) {
     const t = 1 - player.awakeningStartTimer / 0.24;
+    ctx.save();
+    ctx.fillStyle = `rgba(255, 218, 98, ${0.12 * (1 - t)})`;
+    ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    ctx.restore();
+
     ctx.strokeStyle = `rgba(255, 226, 122, ${1 - t})`;
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(player.x, player.y, 24 + t * 110, 0, Math.PI * 2);
     ctx.stroke();
 
+    ctx.strokeStyle = `rgba(255, 241, 168, ${(1 - t) * 0.55})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, 52 + t * 180, 0, Math.PI * 2);
+    ctx.stroke();
+
     ctx.save();
     ctx.translate(player.x, player.y);
     ctx.strokeStyle = `rgba(255, 241, 168, ${(1 - t) * 0.8})`;
     ctx.lineWidth = 2;
-    for (let i = 0; i < 12; i += 1) {
-      const angle = (Math.PI * 2 * i) / 12 + t * 0.5;
-      const start = 18 + t * 18;
-      const end = 36 + t * 82;
+    for (let i = 0; i < 16; i += 1) {
+      const angle = (Math.PI * 2 * i) / 16 + t * 0.7;
+      const start = 16 + t * 24;
+      const end = 44 + t * 112;
       ctx.beginPath();
       ctx.moveTo(Math.cos(angle) * start, Math.sin(angle) * start);
       ctx.lineTo(Math.cos(angle) * end, Math.sin(angle) * end);
       ctx.stroke();
     }
+    ctx.rotate(-t * 0.65);
+    ctx.strokeStyle = `rgba(244, 199, 91, ${(1 - t) * 0.5})`;
+    ctx.beginPath();
+    ctx.moveTo(0, -54 - t * 18);
+    ctx.lineTo(48 + t * 24, 28 + t * 16);
+    ctx.lineTo(-48 - t * 24, 28 + t * 16);
+    ctx.closePath();
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -2162,6 +2434,7 @@ class Hud {
     this.awakeningButton = documentRef.getElementById("awakening-button");
     this.desktopAwakenHint = documentRef.getElementById("desktop-awaken-hint");
     this.screen = documentRef.getElementById("screen-message");
+    this.kicker = this.screen.querySelector(".screen-kicker");
     this.startButton = documentRef.getElementById("start-button");
   }
 
@@ -2171,7 +2444,11 @@ class Hud {
     this.score.textContent = `Score ${world.score}`;
 
     const wave = WAVES[world.waveIndex];
-    this.wave.textContent = world.gameState === "stage_clear" ? "Clear" : wave ? wave.label : "Final";
+    this.wave.textContent = world.gameState === "stage_clear" || world.stageClearPresentationTimer > 0
+      ? "Clear"
+      : wave
+        ? wave.label
+        : "Final";
 
     const meter = Math.round(player.awakeningMeter);
     const isReady = meter >= 100 && getPlayerForm(player) !== "awakened";
@@ -2204,20 +2481,28 @@ class Hud {
     const button = this.startButton;
 
     if (world.gameState === "title") {
+      this.kicker.textContent = "Tomb of the First Sigil";
+      this.kicker.hidden = false;
       title.textContent = "Living Sigil";
-      text.textContent = "Move with WASD. Shoot with arrow keys. Space awakens. P or Enter pauses.";
+      text.textContent = "Enter the buried chamber. WASD moves, arrows shoot, Space awakens, P or Enter pauses.";
       button.textContent = "Start";
     } else if (world.gameState === "paused") {
+      this.kicker.textContent = "Tomb of the First Sigil";
+      this.kicker.hidden = false;
       title.textContent = "Paused";
       text.textContent = "Resume or restart when ready.";
       button.textContent = "Resume";
     } else if (world.gameState === "game_over") {
+      this.kicker.textContent = "The sigil falls silent";
+      this.kicker.hidden = false;
       title.textContent = "Game Over";
       text.textContent = `Score ${world.score}. Press R or restart.`;
       button.textContent = "Restart";
     } else if (world.gameState === "stage_clear") {
-      title.textContent = "Stage Clear";
-      text.textContent = `The tomb is quiet. Score ${world.score}.`;
+      this.kicker.textContent = "Tomb of the First Sigil";
+      this.kicker.hidden = false;
+      title.textContent = "First Sigil Reclaimed";
+      text.textContent = `The tomb falls silent. Score ${world.score}.`;
       button.textContent = "Restart";
     }
   }
@@ -2269,14 +2554,18 @@ const canvas = document.getElementById("game-canvas");
 const viewport = new Viewport(canvas);
 const input = new InputManager(document);
 const world = new World();
-const renderer = new Renderer(viewport.ctx);
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const renderer = new Renderer(viewport.ctx, { reducedMotion });
+const audio = new AudioCues();
 const hud = new Hud(document);
 const debug = new DebugOverlay(document.getElementById("debug-panel"));
 
 document.getElementById("start-button").addEventListener("click", () => {
   if (world.gameState === "paused") {
+    audio.unlock();
     world.togglePause();
   } else {
+    audio.playStart();
     world.start();
   }
 });
@@ -2295,6 +2584,7 @@ function frame(now) {
   }
 
   world.update(dt, snapshot);
+  audio.update(world, snapshot);
   renderer.render(world, snapshot);
   hud.update(world);
   debug.update(world, snapshot, viewport);
