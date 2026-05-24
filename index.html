@@ -1748,12 +1748,6 @@ class Renderer {
       ctx.stroke();
     }
 
-    ctx.fillStyle = form === "awakened" ? "#fff1a8" : "#d7b95f";
-    ctx.beginPath();
-    ctx.ellipse(-11, -2, 3, 6, 0, 0, Math.PI * 2);
-    ctx.ellipse(11, -2, 3, 6, 0, 0, Math.PI * 2);
-    ctx.fill();
-
     ctx.restore();
     ctx.globalAlpha = 1;
   }
@@ -1777,11 +1771,6 @@ class Renderer {
     this.drawSprite(ctx, asset, {
       glow: enemy.state === "hurt" ? hurtGlow : normalGlow
     });
-    ctx.fillStyle = enemy.state === "hurt" ? "#ffb0a1" : "#d9d6ff";
-    ctx.beginPath();
-    ctx.ellipse(-7, -5, 2.8, 5.5, 0.3, 0, Math.PI * 2);
-    ctx.ellipse(7, -5, 2.8, 5.5, -0.3, 0, Math.PI * 2);
-    ctx.fill();
     ctx.restore();
   }
 
