@@ -266,24 +266,42 @@ kbd {
   border: 2px solid rgba(244, 199, 91, 0.42);
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 50%, rgba(244, 199, 91, 0.17), transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(246, 236, 211, 0.08) 0 12%, transparent 13%),
+    radial-gradient(circle at 50% 50%, transparent 0 39%, rgba(244, 199, 91, 0.18) 40% 42%, transparent 43%),
+    linear-gradient(90deg, transparent 47%, rgba(244, 199, 91, 0.16) 48% 52%, transparent 53%),
+    linear-gradient(0deg, transparent 47%, rgba(244, 199, 91, 0.16) 48% 52%, transparent 53%),
+    radial-gradient(circle at 50% 50%, rgba(244, 199, 91, 0.14), transparent 52%),
     rgba(0, 0, 0, 0.3);
   box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.66);
   opacity: 0.82;
   touch-action: none;
 }
 
+.joystick::before {
+  content: "";
+  position: absolute;
+  inset: 19%;
+  border: 1px dashed rgba(246, 236, 211, 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
 .joystick-stick {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 42%;
+  width: 46%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: #050505;
-  border: 1px solid rgba(246, 236, 211, 0.42);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  background:
+    radial-gradient(circle at 38% 30%, rgba(246, 236, 211, 0.36), transparent 0 21%),
+    radial-gradient(circle at 50% 54%, #16120c 0 43%, #050505 44% 100%);
+  border: 2px solid rgba(246, 236, 211, 0.5);
+  box-shadow:
+    0 7px 18px rgba(0, 0, 0, 0.56),
+    inset 0 -6px 10px rgba(0, 0, 0, 0.55),
+    inset 0 3px 7px rgba(255, 236, 166, 0.1);
   pointer-events: none;
 }
 
@@ -403,7 +421,7 @@ kbd {
   .touch-controls {
     position: fixed;
     left: 50%;
-    bottom: max(8px, env(safe-area-inset-bottom));
+    bottom: max(16px, calc(env(safe-area-inset-bottom) + 8px));
     z-index: 4;
     transform: translateX(-50%);
     height: 134px;
@@ -422,7 +440,11 @@ kbd {
 
   .joystick {
     background:
-      radial-gradient(circle at 50% 50%, rgba(244, 199, 91, 0.15), transparent 35%),
+      radial-gradient(circle at 50% 50%, rgba(246, 236, 211, 0.07) 0 12%, transparent 13%),
+      radial-gradient(circle at 50% 50%, transparent 0 39%, rgba(244, 199, 91, 0.14) 40% 42%, transparent 43%),
+      linear-gradient(90deg, transparent 47%, rgba(244, 199, 91, 0.12) 48% 52%, transparent 53%),
+      linear-gradient(0deg, transparent 47%, rgba(244, 199, 91, 0.12) 48% 52%, transparent 53%),
+      radial-gradient(circle at 50% 50%, rgba(244, 199, 91, 0.12), transparent 52%),
       rgba(0, 0, 0, 0.2);
     opacity: 0.66;
   }
@@ -1206,7 +1228,9 @@ function damageEnemy(world, enemy, damage) {
     enemy.state = "dying";
     enemy.stateTimer = BALANCE.shadowWing.dyingDuration;
     world.score += BALANCE.shadowWing.scoreValue;
-    world.player.awakeningMeter = Math.min(100, world.player.awakeningMeter + BALANCE.shadowWing.awakeningGain);
+    if (getPlayerForm(world.player) !== "awakened") {
+      world.player.awakeningMeter = Math.min(100, world.player.awakeningMeter + BALANCE.shadowWing.awakeningGain);
+    }
     spawnEffect(world, {
       type: "enemy_death",
       x: enemy.x,
