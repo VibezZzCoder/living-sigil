@@ -14,32 +14,31 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 
 ## Current Build
 
-- One 960x540 tomb arena
-- Stage 1 four-wave run ending with the Gold Wing Warden elite fight
-- Playable Stage 2 prototype run: The Scriptorium of Dust (3 waves, Guardian boss, Dust Sigil reward beat)
-- Stage 2 Phase 8 QA/tuning pass complete: mobile portrait/landscape reward readability checked, Dust Sigil presentation centered correctly on high-DPR mobile screens, and release/Pages artifacts reverified
+- 960x540 game logic with responsive desktop and mobile layouts
+- Stage 1 full run: four waves ending with the Gold Wing Warden
+- Stage 2 playable run: The Scriptorium of Dust (3 waves, Guardian boss, Dust Sigil reward beat)
 - Dormant and awakened player forms
-- Shadow Wing enemies, Sand Dasher prototype enemy, Gold Wing Warden, and Guardian of the Scriptorium boss prototype
-- Player bullets, contact damage, health, score, pause, game over, and stage clear
-- Stage 1 identity polish for Tomb of the First Sigil, including intro/clear presentation, ambient dust, Awakening flare, and tiny WebAudio cues
-- Stage 2 Buried Observatory background, live quicksand drag zones (0.50 speed multiplier), stage intro banner, and Dust Sigil reclaimed beat before temporary prototype clear presentation
-- Static loading screen with asset preload progress before the title becomes interactive
-- Mobile portrait, mobile landscape, and desktop layouts
+- Enemy roster: Shadow Wing, Sand Dasher, Gold Wing Warden, Guardian of the Scriptorium
+- Stage 2 enemy sprite art integrated (state-based Sand Dasher/Guardian visuals)
+- Core combat loop: bullets, contact damage, health, score, pause, game over, stage clear
+- Stage 2 quicksand drag zones (0.50 speed multiplier) and Buried Observatory background
+- Sigil pickup now restores player health before stage transition
+- Static loading screen with asset preload progress before title interaction
 
 ## Status
 
-This is an evolving browser/mobile prototype. The current build includes a complete Stage 1 flow plus a playable Stage 2 Phase 8 prototype pass (3 waves + Guardian + Dust Sigil reward beat + mobile/release QA). Stage 2 remains a temporary clear endpoint while later stages are pending.
+This is an evolving browser/mobile prototype. The current build includes a complete Stage 1 flow plus a playable Stage 2 run with Guardian and Dust Sigil reward flow. Stage 2 remains the temporary endpoint while later stages are pending.
 
 ## Roadmap
 
-- Current: Stage 1 complete prototype flow plus Stage 2 playable Guardian + Dust Sigil reward prototype with Phase 8 QA/tuning completed.
-- Next planned: hold at the temporary Stage 2 clear endpoint until the next explicitly requested scope.
-- Scope: focused 4-stage Cosmic Ascent arc before considering broader expansion.
+- Current: Stage 1 complete, Stage 2 playable through Guardian + Dust Sigil reward flow.
+- Next: hold at the temporary Stage 2 clear endpoint until the next explicitly requested scope.
+- Scope: focused 4-stage Cosmic Ascent arc before broader expansion.
 
 ## Project Notes
 
-The source is plain HTML, CSS, and JavaScript with no external runtime dependencies. The upload-ready build is generated as a single file for GitHub Pages.
-
+The source is plain HTML, CSS, and JavaScript with no external runtime dependencies.
+The upload-ready build is generated as a single file for GitHub Pages.
 
 ## License
 
