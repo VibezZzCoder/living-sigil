@@ -2377,9 +2377,9 @@ function spawnShadowWing(world) {
   });
 }
 
-function spawnSandDasher(world) {
+function spawnSandDasher(world, options = {}) {
   const stats = BALANCE.sandDasher;
-  const point = chooseSandDasherSpawnPoint(world);
+  const point = chooseSandDasherSpawnPoint(world, options);
   const dashDirection = normalizeVector(world.player.x - point.x, world.player.y - point.y);
 
   world.enemies.push({
@@ -2402,6 +2402,8 @@ function spawnSandDasher(world) {
     y: point.y,
     duration: stats.spawnDuration
   });
+
+  return point;
 }
 
 function spawnGoldWingWarden(world) {
@@ -2490,19 +2492,33 @@ function chooseSpawnPoint(world) {
   return best;
 }
 
-function chooseSandDasherSpawnPoint(world) {
+function chooseSandDasherSpawnPoint(world, options = {}) {
   const candidates = [
-    { x: 230, y: 330 },
-    { x: 730, y: 330 },
-    { x: 480, y: 405 },
-    { x: 220, y: 190 },
-    { x: 740, y: 190 }
+    { x: 190, y: 84, lane: "north" },
+    { x: 480, y: 74, lane: "north" },
+    { x: 770, y: 84, lane: "north" },
+    { x: 872, y: 212, lane: "east" },
+    { x: 872, y: 344, lane: "east" },
+    { x: 750, y: 456, lane: "south" },
+    { x: 480, y: 472, lane: "south" },
+    { x: 210, y: 456, lane: "south" },
+    { x: 88, y: 212, lane: "west" },
+    { x: 88, y: 344, lane: "west" }
   ];
+  const laneFilteredCandidates = options.excludeLane
+    ? candidates.filter((candidate) => candidate.lane !== options.excludeLane)
+    : candidates;
+  const pool = laneFilteredCandidates.length > 0 ? laneFilteredCandidates : candidates;
+  const randomizedCandidates = [...pool];
+  for (let i = randomizedCandidates.length - 1; i > 0; i -= 1) {
+    const swapIndex = Math.floor(Math.random() * (i + 1));
+    [randomizedCandidates[i], randomizedCandidates[swapIndex]] = [randomizedCandidates[swapIndex], randomizedCandidates[i]];
+  }
   const safeDistanceSquared = BALANCE.sandDasher.spawnSafeDistance ** 2;
-  let best = candidates[0];
+  let best = randomizedCandidates[0];
   let bestDistance = distanceSquared(best, world.player);
 
-  for (const candidate of candidates) {
+  for (const candidate of randomizedCandidates) {
     const distance = distanceSquared(candidate, world.player);
     if (distance >= safeDistanceSquared) {
       return candidate;
@@ -3361,7 +3377,10 @@ function getActiveStageWaves(world) {
 function spawnEnemyForWave(world, wave) {
   const enemyType = chooseEnemyType(wave);
   if (enemyType === "sand_dasher") {
-    spawnSandDasher(world);
+    const firstSpawn = spawnSandDasher(world);
+    if (isStage2Active(world)) {
+      spawnSandDasher(world, { excludeLane: firstSpawn?.lane });
+    }
     return;
   }
   spawnShadowWing(world);
@@ -3417,6 +3436,10 @@ function prepareNextStageTransition(world) {
   world.waveIndex = getActiveStageWaves(world).length;
   world.gameState = "stage_transition";
   return true;
+}
+
+function isStage2Active(world) {
+  return world.activeStage?.id === "stage2_scriptorium_of_dust";
 }
 
 function countActiveEnemies(world) {
