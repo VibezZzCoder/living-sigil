@@ -1398,6 +1398,9 @@ class KeyboardInput {
 
 class TouchJoysticks {
   constructor() {
+    this.baseDeadzone = 0.18;
+    this.activationMoveThresholdPx = 12;
+    this.activationDeadzone = 0.26;
     this.vectors = {
       move: { x: 0, y: 0 },
       shoot: { x: 0, y: 0 }
@@ -1407,6 +1410,10 @@ class TouchJoysticks {
       shoot: null
     };
     this.bounds = {
+      move: null,
+      shoot: null
+    };
+    this.activation = {
       move: null,
       shoot: null
     };
@@ -1440,11 +1447,26 @@ class TouchJoysticks {
       const rawX = (event.clientX - cx) / maxDistance;
       const rawY = (event.clientY - cy) / maxDistance;
       const clamped = clampVector(rawX, rawY, 1);
-      const deadzone = 0.18;
+      const activation = this.activation[action];
+      const movedFromStart = activation
+        ? Math.hypot(event.clientX - activation.startX, event.clientY - activation.startY)
+        : 0;
+      if (activation && !activation.activated && movedFromStart >= this.activationMoveThresholdPx) {
+        activation.activated = true;
+      }
+      const hasActivated = Boolean(activation?.activated);
+
+      const deadzone = hasActivated ? this.baseDeadzone : this.activationDeadzone;
       const magnitude = Math.hypot(clamped.x, clamped.y);
 
-      this.vectors[action] = magnitude < deadzone ? { x: 0, y: 0 } : clamped;
-      element.classList.toggle("is-active", magnitude >= deadzone);
+      const isIntentional = magnitude >= deadzone && hasActivated;
+      this.vectors[action] = isIntentional ? clamped : { x: 0, y: 0 };
+      element.classList.toggle("is-active", isIntentional);
+
+      if (!hasActivated) {
+        stick.style.transform = "translate(-50%, -50%)";
+        return;
+      }
 
       stick.style.transform = `translate(calc(-50% + ${clamped.x * maxDistance}px), calc(-50% + ${clamped.y * maxDistance}px))`;
     };
@@ -1462,6 +1484,11 @@ class TouchJoysticks {
         cx: rect.left + rect.width / 2,
         cy: rect.top + rect.height / 2,
         maxDistance: rect.width * 0.38
+      };
+      this.activation[action] = {
+        startX: event.clientX,
+        startY: event.clientY,
+        activated: false
       };
       element.setPointerCapture(event.pointerId);
       update(event);
@@ -1491,6 +1518,7 @@ class TouchJoysticks {
   resetAction(action, element = null, stick = null) {
     this.pointerIds[action] = null;
     this.bounds[action] = null;
+    this.activation[action] = null;
     this.vectors[action] = { x: 0, y: 0 };
     element?.classList.remove("is-active");
     if (stick) {
