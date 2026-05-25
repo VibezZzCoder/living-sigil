@@ -15,22 +15,25 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 ## Current Build
 
 - One 960x540 tomb arena
-- Four-wave Stage 1 run ending with the Gold Wing Warden elite fight
+- Stage 1 four-wave run ending with the Gold Wing Warden elite fight
+- Playable Stage 2 prototype run: The Scriptorium of Dust (3 waves, Guardian boss, Dust Sigil reward beat)
+- Stage 2 Phase 8 QA/tuning pass complete: mobile portrait/landscape reward readability checked, Dust Sigil presentation centered correctly on high-DPR mobile screens, and release/Pages artifacts reverified
 - Dormant and awakened player forms
-- Shadow Wing enemies and the Gold Wing Warden
+- Shadow Wing enemies, Sand Dasher prototype enemy, Gold Wing Warden, and Guardian of the Scriptorium boss prototype
 - Player bullets, contact damage, health, score, pause, game over, and stage clear
 - Stage 1 identity polish for Tomb of the First Sigil, including intro/clear presentation, ambient dust, Awakening flare, and tiny WebAudio cues
+- Stage 2 Buried Observatory background, live quicksand drag zones (0.50 speed multiplier), stage intro banner, and Dust Sigil reclaimed beat before temporary prototype clear presentation
 - Static loading screen with asset preload progress before the title becomes interactive
 - Mobile portrait, mobile landscape, and desktop layouts
 
 ## Status
 
-This is an evolving browser/mobile prototype. The current build is a Stage 1 prototype centered on Tomb of the First Sigil / Deep Tomb, with touch controls, enemy readability, presentation polish, and mobile layouts still being tuned before larger systems are added.
+This is an evolving browser/mobile prototype. The current build includes a complete Stage 1 flow plus a playable Stage 2 Phase 8 prototype pass (3 waves + Guardian + Dust Sigil reward beat + mobile/release QA). Stage 2 remains a temporary clear endpoint while later stages are pending.
 
 ## Roadmap
 
-- Current: Stage 1 prototype with the Gold Wing Warden climax and First Sigil reward flow.
-- Next planned: Stage 2 - The Scriptorium of Dust, a moonlit dark desert archive.
+- Current: Stage 1 complete prototype flow plus Stage 2 playable Guardian + Dust Sigil reward prototype with Phase 8 QA/tuning completed.
+- Next planned: hold at the temporary Stage 2 clear endpoint until the next explicitly requested scope.
 - Scope: focused 4-stage Cosmic Ascent arc before considering broader expansion.
 
 ## Project Notes
