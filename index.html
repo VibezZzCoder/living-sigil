@@ -1844,6 +1844,8 @@ function createHazards(stage) {
     radius: hazard.radius,
     speedMultiplier: hazard.speedMultiplier,
     age: 0,
+    contactPulseTimer: 0,
+    isPlayerInside: false,
     debugLabel: hazard.debugLabel ?? hazard.id
   }));
 }
@@ -1851,6 +1853,17 @@ function createHazards(stage) {
 function updateHazards(world, dt) {
   for (const hazard of world.hazards) {
     hazard.age += dt;
+    hazard.contactPulseTimer = Math.max(0, (hazard.contactPulseTimer ?? 0) - dt);
+    if (hazard.type !== "quicksand") {
+      hazard.isPlayerInside = false;
+      continue;
+    }
+
+    const isOverlapping = isPlayerOverlappingHazard(world.player, hazard);
+    if (isOverlapping && !hazard.isPlayerInside) {
+      hazard.contactPulseTimer = 0.42;
+    }
+    hazard.isPlayerInside = isOverlapping;
   }
   world.hazardStatus = getHazardMovementStatus(world.hazards, world.player);
 }
@@ -3743,27 +3756,31 @@ class Renderer {
   drawHazards(ctx, world) {
     for (const hazard of world.hazards) {
       if (hazard.type === "quicksand") {
-        this.drawQuicksandHazard(ctx, hazard, world.elapsed);
+        this.drawQuicksandHazard(ctx, hazard, world.elapsed, world);
       }
     }
   }
 
-  drawQuicksandHazard(ctx, hazard, time) {
+  drawQuicksandHazard(ctx, hazard, time, world) {
     const pulse = Math.sin(time * 2.4 + hazard.age * 0.8 + hazard.x * 0.01) * 0.5 + 0.5;
+    const contactPulse = Math.max(0, Math.min(1, (hazard.contactPulseTimer ?? 0) / 0.42));
+    const isActiveHazard = world.hazardStatus?.activeHazardId === hazard.id;
+    const activeBoost = isActiveHazard ? 0.4 : 0;
+    const intensity = Math.max(activeBoost, contactPulse);
     ctx.save();
     ctx.translate(hazard.x, hazard.y);
     ctx.scale(1.34, 0.58);
     const gradient = ctx.createRadialGradient(0, 0, 6, 0, 0, hazard.radius * 0.76);
-    gradient.addColorStop(0, "rgba(8, 29, 42, 0.16)");
-    gradient.addColorStop(0.58, "rgba(15, 61, 70, 0.1)");
+    gradient.addColorStop(0, `rgba(8, 29, 42, ${0.16 + intensity * 0.06})`);
+    gradient.addColorStop(0.58, `rgba(15, 61, 70, ${0.1 + intensity * 0.08})`);
     gradient.addColorStop(1, "rgba(5, 11, 28, 0)");
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(0, 0, hazard.radius * 0.78, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = `rgba(47, 125, 135, ${0.16 + pulse * 0.05})`;
-    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = `rgba(47, 125, 135, ${0.16 + pulse * 0.05 + intensity * 0.11})`;
+    ctx.lineWidth = 1.2 + intensity * 0.6;
     for (let i = 0; i < 3; i += 1) {
       const radius = hazard.radius * (0.26 + i * 0.15) + Math.sin(time * 1.8 + i) * 1.4;
       const start = time * (0.38 + i * 0.08) + i * 1.7;
@@ -3772,7 +3789,7 @@ class Renderer {
       ctx.stroke();
     }
 
-    ctx.strokeStyle = "rgba(91, 180, 168, 0.12)";
+    ctx.strokeStyle = `rgba(91, 180, 168, ${0.12 + intensity * 0.1})`;
     ctx.lineWidth = 1;
     for (let i = 0; i < 4; i += 1) {
       const angle = time * 0.32 + (Math.PI * 2 * i) / 5;
@@ -3786,6 +3803,47 @@ class Renderer {
         Math.cos(angle + 0.78) * outer,
         Math.sin(angle + 0.78) * outer
       );
+      ctx.stroke();
+    }
+
+    const rimAlpha = 0.2 + pulse * 0.1 + intensity * 0.28;
+    ctx.strokeStyle = `rgba(104, 227, 206, ${rimAlpha})`;
+    ctx.lineWidth = 1.45 + intensity * 1.1;
+    ctx.beginPath();
+    ctx.arc(0, 0, hazard.radius * 0.73, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = `rgba(140, 245, 225, ${0.08 + intensity * 0.16})`;
+    ctx.lineWidth = 1 + intensity * 0.7;
+    ctx.beginPath();
+    ctx.arc(0, 0, hazard.radius * 0.63, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = `rgba(122, 238, 214, ${0.18 + intensity * 0.24})`;
+    ctx.lineWidth = 1.15 + intensity * 0.45;
+    for (let i = 0; i < 7; i += 1) {
+      const angle = time * 0.95 + i * ((Math.PI * 2) / 7) + hazard.age * 0.05;
+      const outer = hazard.radius * (0.68 + Math.sin(time * 1.4 + i) * 0.025);
+      const inner = hazard.radius * (0.38 + Math.cos(time * 1.2 + i) * 0.02);
+      const mid = hazard.radius * 0.53;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+      ctx.quadraticCurveTo(
+        Math.cos(angle + 0.22) * mid,
+        Math.sin(angle + 0.22) * mid,
+        Math.cos(angle + 0.34) * inner,
+        Math.sin(angle + 0.34) * inner
+      );
+      ctx.stroke();
+    }
+
+    if (contactPulse > 0) {
+      const flareT = 1 - contactPulse;
+      const flareRadius = hazard.radius * (0.5 + flareT * 0.28);
+      ctx.strokeStyle = `rgba(166, 255, 235, ${contactPulse * 0.34})`;
+      ctx.lineWidth = 2.8 * contactPulse + 0.8;
+      ctx.beginPath();
+      ctx.arc(0, 0, flareRadius, 0, Math.PI * 2);
       ctx.stroke();
     }
     ctx.restore();
