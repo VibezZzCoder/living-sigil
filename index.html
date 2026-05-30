@@ -794,7 +794,7 @@ kbd {
   display: block;
 }
 
-@media (orientation: landscape) and (max-height: 620px) {
+@media (orientation: landscape) and (max-height: 620px), (orientation: landscape) and (any-pointer: coarse), (orientation: landscape) and (hover: none) {
   :root {
     --control-size: clamp(96px, 21dvh, 120px);
     --button-height: 34px;
@@ -918,7 +918,7 @@ kbd {
   }
 }
 
-@media (min-width: 900px) and (min-height: 700px) {
+@media (min-width: 900px) and (min-height: 700px) and (hover: hover) and (pointer: fine) {
   .game-shell {
     grid-template-rows: auto auto;
     align-content: center;
@@ -1647,7 +1647,11 @@ class Viewport {
     this.canvas.height = Math.floor(LOGICAL_HEIGHT * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const isTouchish = matchMedia("(pointer: coarse)").matches;
+    const isTouchish =
+      matchMedia("(pointer: coarse)").matches ||
+      matchMedia("(any-pointer: coarse)").matches ||
+      matchMedia("(hover: none)").matches ||
+      navigator.maxTouchPoints > 0;
     const isPortrait = matchMedia("(orientation: portrait)").matches;
     this.layoutMode = isTouchish ? (isPortrait ? "mobile_portrait" : "mobile_landscape") : "desktop";
   }
