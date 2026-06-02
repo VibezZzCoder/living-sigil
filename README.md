@@ -17,22 +17,23 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 - 960x540 game logic with responsive desktop and mobile layouts
 - Stage 1 full run: four waves ending with the Gold Wing Warden
 - Stage 2 playable run: The Scriptorium of Dust (3 waves, Guardian boss, Dust Sigil reward beat)
+- Stage 3 playable prototype: The Overgrown Scriptorium (3 waves, Warded Glyph Anchors, Warded Vine Glyphs, Bramble Heart boss, Verdant Sigil reward beat, temporary clear)
 - Dormant and awakened player forms
-- Enemy roster: Shadow Wing, Sand Dasher, Gold Wing Warden, Guardian of the Scriptorium
+- Enemy roster: Shadow Wing, Sand Dasher, Warded Vine Glyph, Gold Wing Warden, Guardian of the Scriptorium, Bramble Heart
 - Stage 2 enemy sprite art integrated (state-based Sand Dasher/Guardian visuals)
 - Core combat loop: bullets, contact damage, health, score, pause, game over, stage clear
-- Stage 2 quicksand drag zones (0.50 speed multiplier) and Buried Observatory background
+- Stage 2 quicksand drag zones (0.50 speed multiplier), Stage 3 ward anchors, and stage-specific backgrounds
 - Sigil pickup now restores player health before stage transition
 - Static loading screen with asset preload progress before title interaction
 
 ## Status
 
-This is an evolving browser/mobile prototype. The current build includes a complete Stage 1 flow plus a playable Stage 2 run with Guardian and Dust Sigil reward flow. Stage 2 remains the temporary endpoint while later stages are pending.
+This is an evolving browser/mobile prototype. The current build is a three-stage run: a complete Stage 1 flow, a playable Stage 2 run with Guardian and Dust Sigil reward flow, and a playable Stage 3 run through the Bramble Heart boss and Verdant Sigil reclamation. Stage 3 remains the temporary endpoint; Stage 4 is not implemented.
 
 ## Roadmap
 
-- Current: Stage 1 complete, Stage 2 playable through Guardian + Dust Sigil reward flow.
-- Next: hold at the temporary Stage 2 clear endpoint until the next explicitly requested scope.
+- Current: Stage 1 complete, Stage 2 playable through Guardian + Dust Sigil reward flow, Stage 3 playable through 3 Warded Glyph Anchor waves, the Bramble Heart boss climax, and the Verdant Sigil reward.
+- Next: hold at the temporary Stage 3 clear endpoint after the Verdant Sigil reclamation until the next explicitly requested scope; planned next Stage 3 work is Phase 7 mobile/desktop QA and tuning.
 - Scope: focused 4-stage Cosmic Ascent arc before broader expansion.
 
 ## Project Notes
