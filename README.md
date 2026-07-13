@@ -24,20 +24,23 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 - Sprite art is integrated where approved, with canvas-drawn visuals retained as automatic fallbacks or intentional Stage 4 prototype art:
   - Stage 2: state-based Sand Dasher and Guardian visuals plus the bespoke Moon-Sand Hourglass Dust Sigil
   - Stage 3: Warded Vine Glyph, Warded Glyph Anchor, Bramble Heart, Bramble Thorn projectile, and corrupted/purified Verdant Sigil
-  - Stage 4: approved Diamond Sentry Star Core, Winged Spindle Astral Weaver, and corrupted/purified Constellation Tablet Astral Sigil sprites; portals, shards, Constellation Sparks, Stellar Sweep, and all canvas bodies/glyphs remain procedural or automatic fallbacks
+  - Stage 4: approved Diamond Sentry Star Core, Winged Spindle Astral Weaver, corrupted/purified Constellation Tablet Astral Sigil, and Octagonal Loom Gate portal sprites; lensing, shards, Constellation Sparks, Stellar Sweep, and canvas bodies/rings remain procedural effects or automatic fallbacks
 - Core combat loop: bullets, contact damage, health, score, pause, game over, stage clear
 - Stage 2 quicksand drag zones (0.50 speed multiplier), Stage 3 ward anchors, and stage-specific backgrounds
 - Sigil pickup restores player health before stage transition
+- Four distinct offline procedural WebAudio scores, expanded event SFX, balanced music/effect buses, and master dynamics control
+- Sigil-convergence arc-complete finale with a responsive results presentation and reduced-motion path
 - Static loading screen with asset preload progress before title interaction
 
 ## Status
 
-This is a browser/mobile four-stage release-candidate prototype. Stage 4 final sprite integration and the four-stage visual consistency audit are complete. The exact generated release boots cleanly, passes desktop/portrait/landscape endpoint checks, and reaches the arc-complete clear through the Astral reward route.
+This is a browser/mobile four-stage release-candidate prototype. Stage 4 sprite/portal integration, reward correction, the four-stage procedural soundtrack, expanded effects mix, and the sigil-convergence finale are complete. The exact generated release boots cleanly, passes normal/fallback and desktop/portrait/landscape endpoint checks, and reaches the dedicated arc-complete state through the Astral reward route.
 
 ## Roadmap
 
 - Current: four-stage playable prototype and first Cosmic Ascent arc complete.
-- Future: To be determined
+- Release state: source/release/Pages parity, debug routes, desktop, portrait, landscape, packaging, embedded assets, and license checks pass for the final Stage 4 art. One fresh uninterrupted manual four-stage combat run remains the final local acceptance gate because browser automation cannot sustain held movement/shoot input.
+- Future scope: To Be Determined...
 
 ## Project Notes
 
