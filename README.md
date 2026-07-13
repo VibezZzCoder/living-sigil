@@ -17,12 +17,14 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 - 960x540 game logic with responsive desktop and mobile layouts
 - Stage 1 full run: four waves ending with the Gold Wing Warden
 - Stage 2 playable run: The Scriptorium of Dust (3 waves, Guardian boss, Dust Sigil reward beat)
-- Stage 3 playable prototype: The Overgrown Scriptorium (3 waves, Warded Glyph Anchors, Warded Vine Glyphs, Bramble Heart boss, Verdant Sigil reward beat, temporary clear)
+- Stage 3 playable prototype: The Overgrown Scriptorium (3 waves, Warded Glyph Anchors, Warded Vine Glyphs, Bramble Heart boss, Verdant Sigil reward beat)
+- Stage 4 complete prototype: The Celestial Loom (3 finite portal-teaching waves, Astral Weaver boss, Astral Sigil reward, and first Cosmic Ascent arc-complete clear)
 - Dormant and awakened player forms
-- Enemy roster: Shadow Wing, Sand Dasher, Warded Vine Glyph, Gold Wing Warden, Guardian of the Scriptorium, Bramble Heart
-- Sprite art integrated across all three stages, with canvas-drawn visuals kept as automatic fallbacks if any sprite fails to load:
-  - Stage 2: state-based Sand Dasher and Guardian visuals
+- Enemy roster: Shadow Wing, Sand Dasher, Warded Vine Glyph, Star Core, Gold Wing Warden, Guardian of the Scriptorium, Bramble Heart, Astral Weaver
+- Sprite art is integrated where approved, with canvas-drawn visuals retained as automatic fallbacks or intentional Stage 4 prototype art:
+  - Stage 2: state-based Sand Dasher and Guardian visuals plus the bespoke Moon-Sand Hourglass Dust Sigil
   - Stage 3: Warded Vine Glyph, Warded Glyph Anchor, Bramble Heart, Bramble Thorn projectile, and corrupted/purified Verdant Sigil
+  - Stage 4: approved Diamond Sentry Star Core, Winged Spindle Astral Weaver, and corrupted/purified Constellation Tablet Astral Sigil sprites; portals, shards, Constellation Sparks, Stellar Sweep, and all canvas bodies/glyphs remain procedural or automatic fallbacks
 - Core combat loop: bullets, contact damage, health, score, pause, game over, stage clear
 - Stage 2 quicksand drag zones (0.50 speed multiplier), Stage 3 ward anchors, and stage-specific backgrounds
 - Sigil pickup restores player health before stage transition
@@ -30,13 +32,12 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 
 ## Status
 
-This is an evolving browser/mobile prototype. The current build is a three-stage run: a complete Stage 1 flow, a playable Stage 2 run with Guardian and Dust Sigil reward flow, and a playable Stage 3 run through the Bramble Heart boss and Verdant Sigil reclamation, now with sprite art integrated across all three stages. A three-stage release-candidate QA pass (desktop, mobile portrait, and mobile landscape) found no regressions. Stage 3 remains the temporary endpoint; Stage 4 is not implemented.
+This is a browser/mobile four-stage release-candidate prototype. Stage 4 final sprite integration and the four-stage visual consistency audit are complete. The exact generated release boots cleanly, passes desktop/portrait/landscape endpoint checks, and reaches the arc-complete clear through the Astral reward route.
 
 ## Roadmap
 
-- Current: Stage 1 complete, Stage 2 playable through Guardian + Dust Sigil reward flow, Stage 3 playable through 3 Warded Glyph Anchor waves, the Bramble Heart boss climax, and the Verdant Sigil reward, with stage sprite art integrated and QA-passed.
-- Next: hold at the temporary Stage 3 clear endpoint after the Verdant Sigil reclamation until the next explicitly requested scope.
-- Scope: focused 4-stage Cosmic Ascent arc before broader expansion.
+- Current: four-stage playable prototype and first Cosmic Ascent arc complete.
+- Future: To be determined
 
 ## Project Notes
 
