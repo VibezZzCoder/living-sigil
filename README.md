@@ -30,17 +30,16 @@ Play: https://vibezzzcoder.github.io/living-sigil/
 - Sigil pickup restores player health before stage transition
 - Four distinct offline procedural WebAudio scores, expanded event SFX, balanced music/effect buses, and master dynamics control
 - Sigil-convergence arc-complete finale with a responsive results presentation and reduced-motion path
-- Static loading screen with asset preload progress before title interaction
+- Static dark loading screen with an immediate indeterminate preparing state, decode progress, graceful art fallbacks, and bootstrap Reload recovery before title interaction
 
 ## Status
 
-This is a browser/mobile four-stage release-candidate prototype. Stage 4 sprite/portal integration, reward correction, the four-stage procedural soundtrack, expanded effects mix, and the sigil-convergence finale are complete. The exact generated release boots cleanly, passes normal/fallback and desktop/portrait/landscape endpoint checks, and reaches the dedicated arc-complete state through the Astral reward route.
+This is a browser/mobile four-stage release-candidate prototype. Stage 4 sprite/portal integration, reward correction, the four-stage procedural soundtrack, expanded effects mix, and the sigil-convergence finale are complete. The exact generated release boots cleanly, passes normal/fallback and desktop/portrait/landscape endpoint checks, and reaches the dedicated arc-complete state through the Astral reward route. Gameplay-reviewed WebP delivery art keeps the offline single-file build near 7.7 MB while the approved PNG originals remain preserved locally.
 
 ## Roadmap
 
 - Current: four-stage playable prototype and first Cosmic Ascent arc complete.
-- Release state: source/release/Pages parity, debug routes, desktop, portrait, landscape, packaging, embedded assets, and license checks pass for the final Stage 4 art. One fresh uninterrupted manual four-stage combat run remains the final local acceptance gate because browser automation cannot sustain held movement/shoot input.
-- Future scope: To Be Determined...
+- Future scope: to be determined.
 
 ## Project Notes
 
