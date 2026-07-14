@@ -1,65 +1,61 @@
 # Living Sigil
 
-Living Sigil is a small browser twin-stick shooter set in a dark tomb arena. You play as a living symbol, survive waves of Shadow Wings, build the Awakening meter, and trigger a short gold-powered form when the meter is full.
+**A four-stage twin-stick action game about awakening an ancient symbol and reclaiming the lost sigils of the Cosmic Ascent.**
 
-Play: https://vibezzzcoder.github.io/living-sigil/
+### [Play Living Sigil in your browser](https://vibezzzcoder.github.io/living-sigil/)
 
-## Controls
+![Four stages of Living Sigil: the Tomb of the First Sigil, the Scriptorium of Dust, the Overgrown Scriptorium, and the Celestial Loom](living-sigil-four-stages.png)
 
-- Move: WASD on keyboard, left joystick on touch
-- Shoot: Arrow keys on keyboard, right joystick on touch
-- Awaken: Space on keyboard, Awaken button on touch
-- Pause: P, Enter, Escape, or the Pause button
-- Restart: R
+## About the game
 
-## Current Build
+You are the Living Sigil: a dormant mark awakened inside a forgotten tomb. Fight through four ancient arenas, survive their guardians, and reclaim the First, Dust, Verdant, and Astral Sigils.
 
-- 960x540 game logic with responsive desktop and mobile layouts
-- Stage 1 full run: four waves ending with the Gold Wing Warden
-- Stage 2 playable run: The Scriptorium of Dust (3 waves, Guardian boss, Dust Sigil reward beat)
-- Stage 3 playable prototype: The Overgrown Scriptorium (3 waves, Warded Glyph Anchors, Warded Vine Glyphs, Bramble Heart boss, Verdant Sigil reward beat)
-- Stage 4 complete prototype: The Celestial Loom (3 finite portal-teaching waves, Astral Weaver boss, Astral Sigil reward, and first Cosmic Ascent arc-complete clear)
-- Dormant and awakened player forms
-- Enemy roster: Shadow Wing, Sand Dasher, Warded Vine Glyph, Star Core, Gold Wing Warden, Guardian of the Scriptorium, Bramble Heart, Astral Weaver
-- Sprite art is integrated where approved, with canvas-drawn visuals retained as automatic fallbacks or intentional Stage 4 prototype art:
-  - Stage 2: state-based Sand Dasher and Guardian visuals plus the bespoke Moon-Sand Hourglass Dust Sigil
-  - Stage 3: Warded Vine Glyph, Warded Glyph Anchor, Bramble Heart, Bramble Thorn projectile, and corrupted/purified Verdant Sigil
-  - Stage 4: approved Diamond Sentry Star Core, Winged Spindle Astral Weaver, corrupted/purified Constellation Tablet Astral Sigil, and Octagonal Loom Gate portal sprites; lensing, shards, Constellation Sparks, Stellar Sweep, and canvas bodies/rings remain procedural effects or automatic fallbacks
-- Core combat loop: bullets, contact damage, health, score, pause, game over, stage clear
-- Stage 2 quicksand drag zones (0.50 speed multiplier), Stage 3 ward anchors, and stage-specific backgrounds
-- Sigil pickup restores player health before stage transition
-- Four distinct offline procedural WebAudio scores, expanded event SFX, balanced music/effect buses, and master dynamics control
-- Sigil-convergence arc-complete finale with a responsive results presentation and reduced-motion path
-- Static dark loading screen with an immediate indeterminate preparing state, decode progress, graceful art fallbacks, and bootstrap Reload recovery before title interaction
+Each stage introduces a new battlefield rule. Quicksand slows your escape, crimson wards protect enemies, and linked portals fold the arena around you. Defeat the Astral Weaver and unite all four sigils to complete the first Cosmic Ascent.
 
-## Status
+Living Sigil plays directly in a desktop or mobile browser. No installation is required.
 
-This is a browser/mobile four-stage release-candidate prototype. Stage 4 sprite/portal integration, reward correction, the four-stage procedural soundtrack, expanded effects mix, and the sigil-convergence finale are complete. The exact generated release boots cleanly, passes normal/fallback and desktop/portrait/landscape endpoint checks, and reaches the dedicated arc-complete state through the Astral reward route. Gameplay-reviewed WebP delivery art keeps the offline single-file build near 7.7 MB while the approved PNG originals remain preserved locally.
+## How to play
 
-## Roadmap
+Move and shoot independently, survive each stage's waves, defeat its guardian, and touch the fallen sigil to reclaim it. Collecting a sigil restores your health before the next stage.
 
-- Current: four-stage playable prototype and first Cosmic Ascent arc complete.
-- Future scope: to be determined.
+Defeated enemies fill the **Awakening** meter. When it reaches 100%, activate Awakening to briefly move faster and fire a powerful three-shot spread.
 
-## Project Notes
+| Action | Keyboard | Touch |
+| --- | --- | --- |
+| Move | `W` `A` `S` `D` | Left joystick |
+| Shoot | Arrow keys | Right joystick |
+| Awaken | `Space` | Awaken button |
+| Pause / resume | `P`, `Enter`, or `Escape` | Pause button |
+| Restart the run | `R` | Restart button on end screens |
 
-The source is plain HTML, CSS, and JavaScript with no external runtime dependencies.
-The upload-ready build is generated as a single file for GitHub Pages.
+## The four stages
+
+### Stage 1 — Tomb of the First Sigil
+
+Learn the core rhythm against swarms of Shadow Wings: keep moving, fire in a different direction, and build Awakening energy. The **Gold Wing Warden** waits at the end of the tomb and guards the First Sigil.
+
+### Stage 2 — The Scriptorium of Dust
+
+Glowing quicksand circles cut your movement speed in half, while **Sand Dashers** telegraph sudden charges across the buried archive. Stay out of the slow zones when a dash is coming, then defeat the **Guardian of the Scriptorium** to reclaim the Dust Sigil.
+
+### Stage 3 — The Overgrown Scriptorium
+
+Crimson **Warded Glyph Anchors** protect nearby enemies. You can still damage a protected enemy, but destroying its anchor first is far more effective. Break the wards, clear the Vine Glyphs, and overcome the **Bramble Heart** to purify the Verdant Sigil.
+
+### Stage 4 — The Celestial Loom
+
+Two linked Astrolabe Portals teleport both you and the stage's Star Cores across the arena. Learn where each portal exits, watch for the Star Cores' cardinal shard bursts, and use the portals to escape the **Astral Weaver's** sweeping attacks. Reclaiming the Astral Sigil completes the four-stage arc.
+
+## Quick tips
+
+- Keep moving. Contact with an enemy costs health even if no projectile hits you.
+- Watch for telegraphs before Sand Dasher charges and boss attacks.
+- In Stage 3, red ward circles are a target-priority clue: destroy the anchor before focusing on the enemies inside.
+- Save Awakening for crowded waves or a boss opening when you can use the full burst.
+- After defeating a guardian, move onto the dropped sigil to continue.
 
 ## License
 
-This repository uses split licensing.
+The software source code is licensed under the [MIT License](CODE_LICENSE.md).
 
-Software source code is licensed under the MIT License. See [`CODE_LICENSE.md`](CODE_LICENSE.md).
-
-Original artwork, the central symbol, derivative symbol designs, sprites, character designs, enemy designs, visual identity, logos, icons, background art, visual effects art, reference images, generated art, processed art, and embedded image data are not licensed under MIT.
-
-These assets are copyright © 2005-2026 E RM. All rights reserved except for limited non-commercial use as part of this game project and its non-commercial forks. See [`ASSET_LICENSE.md`](ASSET_LICENSE.md).
-
-The central symbol and derivative visual designs are original copyrighted works dating from 2005.
-
-Commercial use of the artwork, symbols, sprites, character designs, visual identity, logos, icons, or derivative designs is prohibited without prior written permission. This includes commercial games, apps, merchandise, advertising, branding, NFTs/tokens, asset packs, stock art, icons, logos, mascots, resale, and commercial AI training datasets.
-
-Generated single-file releases, including `release/index.html`, may contain both MIT-licensed code and protected embedded assets. The code portions remain MIT-licensed, but embedded artwork and asset data remain under the Asset License. The complete bundled game may be played, shared, and forked for non-commercial purposes only unless separate written commercial permission is granted.
-
-This project is public for viewing, learning, non-commercial playtesting, and non-commercial collaboration. The artwork and visual identity remain protected.
+The original artwork, symbols, sprites, character and enemy designs, visual identity, reference images, generated art, processed art, and embedded image assets are copyright © 2005–2026 E RM and are covered by the [Living Sigil Asset License](ASSET_LICENSE.md). They may be viewed, shared, and used with this game for non-commercial purposes; commercial use requires prior written permission.
