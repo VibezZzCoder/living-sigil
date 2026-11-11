@@ -10,7 +10,7 @@ The artwork, symbols, sprites, visual identity, reference images, and embedded a
 
 ## MIT License
 
-Copyright (c) 2026 E RM
+Copyright (c) 2026 Edwin RodMen (https://www.instagram.com/edwin_rodmen/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

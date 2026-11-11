@@ -1,7 +1,7 @@
 # Asset License
 
 **Living Sigil — Artwork and Visual Asset License**  
-Copyright © 2005–2026 E RM. All rights reserved except as expressly permitted below.
+Copyright © 2005–2026 Edwin RodMen. All rights reserved except as expressly permitted below.
 
 ## 1. Scope
 
@@ -38,7 +38,7 @@ This permission allows:
 
 ## 3. Prohibited Uses
 
-You may not use the assets, original symbol, derivative symbol designs, character designs, visual identity, or embedded asset data for commercial purposes without prior written permission from E RM.
+You may not use the assets, original symbol, derivative symbol designs, character designs, visual identity, or embedded asset data for commercial purposes without prior written permission from Edwin RodMen.
 
 Prohibited uses include, without limitation:
 
@@ -95,6 +95,6 @@ You may not remove, obscure, or misrepresent copyright ownership of the original
 
 ## 7. Commercial Permission
 
-Commercial use requires prior written permission from E RM.
+Commercial use requires prior written permission from Edwin RodMen.
 
 No commercial rights are granted by public repository access, GitHub forks, downloads, generated builds, or non-commercial redistribution.

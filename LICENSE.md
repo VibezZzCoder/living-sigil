@@ -1,7 +1,7 @@
 # License
 
 **Living Sigil**  
-Copyright © 2005–2026 E RM. All rights reserved except as expressly licensed below.
+Copyright © 2005–2026 Edwin RodMen. All rights reserved except as expressly licensed below.
 
 This repository uses **split licensing** because it contains both software source code and protected original visual artwork.
 
@@ -38,7 +38,7 @@ This includes, without limitation:
 - generated or processed artwork;
 - embedded image data in release files.
 
-These assets are copyright © 2005–2026 E RM. All rights reserved except for the limited non-commercial permission described in [`ASSET_LICENSE.md`](ASSET_LICENSE.md).
+These assets are copyright © 2005–2026 Edwin RodMen. All rights reserved except for the limited non-commercial permission described in [`ASSET_LICENSE.md`](ASSET_LICENSE.md).
 
 The central symbol and derivative visual designs are original copyrighted works dating from 2005.
 
@@ -54,7 +54,7 @@ As a complete bundled game containing protected assets, generated release files 
 
 ## 4. Commercial Use
 
-Commercial use of the artwork, symbols, sprites, character designs, enemy designs, visual identity, logos, icons, backgrounds, effects art, embedded asset data, or derivative designs is prohibited without prior written permission from E RM.
+Commercial use of the artwork, symbols, sprites, character designs, enemy designs, visual identity, logos, icons, backgrounds, effects art, embedded asset data, or derivative designs is prohibited without prior written permission from Edwin RodMen.
 
 This includes, without limitation:
 

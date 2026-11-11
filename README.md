@@ -4,6 +4,8 @@
 
 ### [Play Living Sigil in your browser](https://vibezzzcoder.github.io/living-sigil/)
 
+Built by **Edwin RodMen** ([@edwin_rodmen](https://www.instagram.com/edwin_rodmen/)). Website: <https://sigil.erodmen.com/>. Source: <https://github.com/VibezZzCoder/living-sigil>.
+
 ![Four stages of Living Sigil: the Tomb of the First Sigil, the Scriptorium of Dust, the Overgrown Scriptorium, and the Celestial Loom](living-sigil-four-stages.png)
 
 ## About the game
@@ -16,17 +18,26 @@ Living Sigil plays directly in a desktop or mobile browser. No installation is r
 
 ## How to play
 
-Move and shoot independently, survive each stage's waves, defeat its guardian, and touch the fallen sigil to reclaim it. Collecting a sigil restores your health before the next stage.
+Move and shoot independently, clear each stage's waves, defeat its guardian in three acts, and touch the fallen sigil to reclaim it. Collecting a sigil restores your health before the next stage.
 
-Defeated enemies fill the **Awakening** meter. When it reaches 100%, activate Awakening to briefly move faster and fire a powerful three-shot spread.
+- **Sigil Step** is a short blink that passes through enemies and bullets. Stepping through danger at the last moment is a perfect step: it slows time for an instant and feeds the Awakening meter.
+- **Awakening** fills as you defeat enemies. Activating it releases a Nova that dissolves nearby bullets, then you move faster and fire a three-shot spread for a few seconds; kills extend it. You can keep fighting with a full meter to overcharge it for a longer Awakening.
+- Kills in quick succession build a **chain** that multiplies your score up to x8. Any wound breaks it.
+- Clearing a wave without being hit restores one health. Crowned enemies drop a health mote.
+- Each stage ends with a rank from S to C, and your best ranks and score are kept.
+- If you fall at a guardian you can **Face the Guardian** again directly, or **Rise Again** from the start of the stage.
+- Finish all four stages to unlock the **Second Ascent**, a faster and denser second journey.
 
-| Action | Keyboard | Touch |
-| --- | --- | --- |
-| Move | `W` `A` `S` `D` | Left joystick |
-| Shoot | Arrow keys | Right joystick |
-| Awaken | `Space` | Awaken button |
-| Pause / resume | `P`, `Enter`, or `Escape` | Pause button |
-| Restart the run | `R` | Restart button on end screens |
+| Action | Keyboard and mouse | Gamepad | Touch |
+| --- | --- | --- | --- |
+| Move | `W` `A` `S` `D` | Left stick | Drag on the left side |
+| Aim and fire | Mouse (hold the left button), or arrow keys | Right stick | Drag on the right side |
+| Sigil Step | `Shift` or right click | `A` or `RB` | Step button |
+| Awaken | `Space` | `Y` | Awaken button |
+| Pause / resume | `Esc` or `P` | `Start` | Pause button |
+| Mute | `M` | | Settings |
+
+On a phone in portrait the arena is shown through a closer view that follows you; markers at the edge point to threats outside it. Settings has a "Portrait view" switch for the full arena, plus volume, screen shake, flashes, vibration and aim assist.
 
 ## The four stages
 
@@ -49,6 +60,8 @@ Two linked Astrolabe Portals teleport both you and the stage's Star Cores across
 ## Quick tips
 
 - Keep moving. Contact with an enemy costs health even if no projectile hits you.
+- Only the small bright dot at your centre can be hit by bullets. A wound throws nearby enemies back, so use the moment to get clear.
+- A Shadow Wing that flares crimson is about to lunge along the marked lane. Step through it or sidestep.
 - Watch for telegraphs before Sand Dasher charges and boss attacks.
 - In Stage 3, red ward circles are a target-priority clue: destroy the anchor before focusing on the enemies inside.
 - Save Awakening for crowded waves or a boss opening when you can use the full burst.
@@ -58,4 +71,4 @@ Two linked Astrolabe Portals teleport both you and the stage's Star Cores across
 
 The software source code is licensed under the [MIT License](CODE_LICENSE.md).
 
-The original artwork, symbols, sprites, character and enemy designs, visual identity, reference images, generated art, processed art, and embedded image assets are copyright © 2005–2026 E RM and are covered by the [Living Sigil Asset License](ASSET_LICENSE.md). They may be viewed, shared, and used with this game for non-commercial purposes; commercial use requires prior written permission.
+The original artwork, symbols, sprites, character and enemy designs, visual identity, reference images, generated art, processed art, and embedded image assets are copyright © 2005–2026 Edwin RodMen and are covered by the [Living Sigil Asset License](ASSET_LICENSE.md). They may be viewed, shared, and used with this game for non-commercial purposes; commercial use requires prior written permission.
